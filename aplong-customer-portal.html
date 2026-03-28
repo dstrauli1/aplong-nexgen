@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplong NexGen - Customer Portal</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e3a8a;
+            --success: #16a34a;
+            --warning: #ea580c;
+            --danger: #dc2626;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --text: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 24px 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-brand {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-brand-icon {
+            font-size: 24px;
+        }
+
+        .nav-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .nav-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 8px 12px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            border: none;
+            background: none;
+            text-align: left;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-item-icon {
+            font-size: 18px;
+            min-width: 18px;
+        }
+
+        .sidebar-spacer {
+            flex: 1;
+        }
+
+        .sidebar-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .company-name-small {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+        }
+
+        /* Login Page */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: var(--dark-bg);
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            padding: 48px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-light);
+            margin-top: 12px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .form-input {
+            padding: 12px 16px;
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .login-btn {
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Dashboard */
+        .welcome-section {
+            margin-bottom: 32px;
+        }
+
+        .welcome-text {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .welcome-subtext {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        .stat-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        /* Promotions Banner */
+        .promotions-banner {
+            background: linear-gradient(135deg, var(--warning) 0%, #ea580c 100%);
+            padding: 24px;
+            border-radius: 8px;
+            margin-bottom: 32px;
+            color: white;
+        }
+
+        .promotions-banner h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .promotions-banner p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+        }
+
+        /* Orders Table */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: var(--dark-bg);
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 16px;
+            font-size: 14px;
+        }
+
+        .table-row {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .table-row:hover {
+            background: var(--dark-bg);
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .status-pending {
+            background: rgba(234, 88, 12, 0.2);
+            color: #fbbf24;
+        }
+
+        .status-approved {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+        }
+
+        .status-shipped {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+        }
+
+        .status-completed {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+        }
+
+        .status-closed {
+            background: rgba(107, 114, 128, 0.2);
+            color: #d1d5db;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+        }
+
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .product-sku {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .product-grade {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        .product-stock {
+            font-size: 13px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            background: rgba(34, 197, 94, 0.1);
+            color: #86efac;
+            width: fit-content;
+        }
+
+        .product-stock.low {
+            background: rgba(234, 88, 12, 0.1);
+            color: #fbbf24;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            background: var(--primary-light);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-light);
+            color: var(--primary-light);
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+
+        /* Search Box */
+        .search-box {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            padding-left: 40px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        /* Cart */
+        .cart-summary {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-sku {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .qty-input {
+            width: 60px;
+            padding: 6px;
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .cart-total {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 32px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 16px 24px;
+            border-radius: 6px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Timeline */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+        }
+
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--border);
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .timeline-dot.active {
+            background: var(--primary-light);
+            width: 20px;
+            height: 20px;
+            margin-top: 0;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-label {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .timeline-date {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Order Detail */
+        .order-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .order-header {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .order-field-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .order-field-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+
+            .sidebar.open {
+                width: var(--sidebar-width);
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header,
+            .table-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 12px 16px;
+            }
+
+            .header-title {
+                font-size: 20px;
+            }
+
+            .login-card {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Mock data
+        const MOCK_PRODUCTS = [
+            { id: 1, sku: 'SKU-IP15PM-SCR-OEM', name: 'iPhone 15 Pro Max Screen OEM', grade: 'OEM', price: 48.50, stock: 245 },
+            { id: 2, sku: 'SKU-IP15PM-SCR-AM', name: 'iPhone 15 Pro Max Screen Premium AM', grade: 'Premium Aftermarket', price: 32.00, stock: 180 },
+            { id: 3, sku: 'SKU-IP15P-SCR-OEM', name: 'iPhone 15 Pro Screen OEM', grade: 'OEM', price: 44.00, stock: 312 },
+            { id: 4, sku: 'SKU-IP15PM-BAT-OEM', name: 'iPhone 15 Pro Max Battery OEM', grade: 'OEM', price: 18.50, stock: 520 },
+            { id: 5, sku: 'SKU-IP15-USB-C', name: 'iPhone 15 USB-C Port', grade: 'OEM', price: 8.90, stock: 890 },
+            { id: 6, sku: 'SKU-IP14PM-SCR-OEM', name: 'iPhone 14 Pro Max Screen OEM', grade: 'OEM', price: 38.00, stock: 156 },
+            { id: 7, sku: 'SKU-IP14P-SCR-OEM', name: 'iPhone 14 Pro Screen OEM', grade: 'OEM', price: 35.00, stock: 234 },
+            { id: 8, sku: 'SKU-IP15PM-CAM-OEM', name: 'iPhone 15 Pro Max Camera Module', grade: 'OEM', price: 52.00, stock: 89 },
+            { id: 9, sku: 'SKU-IP14-BAT-OEM', name: 'iPhone 14 Battery OEM', grade: 'OEM', price: 15.00, stock: 450 },
+            { id: 10, sku: 'SKU-SS24U-SCR', name: 'Samsung S24 Ultra Screen', grade: 'Premium', price: 55.00, stock: 67 },
+            { id: 11, sku: 'SKU-IPAD12-SCR', name: 'iPad Pro 12.9 Screen', grade: 'OEM', price: 65.00, stock: 45 },
+            { id: 12, sku: 'SKU-MBP14-BAT', name: 'MacBook Pro 14 Battery', grade: 'OEM', price: 42.00, stock: 78 },
+        ];
+
+        const MOCK_ORDERS = [
+            { id: 'ORD-2024-0087', date: '2024-03-15', status: 'Completed', total: 280.50, items: 6 },
+            { id: 'ORD-2024-0086', date: '2024-03-10', status: 'Shipped', total: 450.00, items: 12 },
+            { id: 'ORD-2024-0085', date: '2024-02-28', status: 'Completed', total: 156.75, items: 4 },
+            { id: 'ORD-2024-0084', date: '2024-02-20', status: 'Completed', total: 890.25, items: 18 },
+            { id: 'ORD-2024-0083', date: '2024-02-08', status: 'Completed', total: 340.00, items: 8 },
+        ];
+
+        const MOCK_RMAS = [
+            { id: 'RMA-2024-0045', orderId: 'ORD-2024-0087', status: 'Closed', items: 2, reason: 'Defective', date: '2024-03-16' },
+            { id: 'RMA-2024-0044', orderId: 'ORD-2024-0086', status: 'Replacement Shipped', items: 1, reason: 'DOA', date: '2024-03-12' },
+            { id: 'RMA-2024-0043', orderId: 'ORD-2024-0085', status: 'Approved', items: 1, reason: 'Wrong Item', date: '2024-03-01' },
+        ];
+
+        const Toast = ({ message, type }) => (
+            React.createElement('div', { className: `toast ${type}` }, message)
+        );
+
+        const LoginPage = ({ onLogin }) => {
+            const [email, setEmail] = useState('d.richards@techfix.co.uk');
+            const [password, setPassword] = useState('demo123');
+            const [company, setCompany] = useState('TechFix London');
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                onLogin(company, email);
+            };
+
+            return React.createElement('div', { className: 'login-container' },
+                React.createElement('div', { className: 'login-card' },
+                    React.createElement('div', { className: 'login-logo' },
+                        React.createElement('div', { style: { fontSize: '48px' } }, '📱'),
+                        React.createElement('div', { className: 'login-logo-text' }, 'Aplong NexGen')
+                    ),
+                    React.createElement('form', { className: 'login-form', onSubmit: handleLogin },
+                        React.createElement('div', { className: 'form-group' },
+                            React.createElement('label', { className: 'form-label' }, 'Company Name'),
+                            React.createElement('input', {
+                                className: 'form-input',
+                                type: 'text',
+                                value: company,
+                                onChange: (e) => setCompany(e.target.value),
+                                placeholder: 'Your Company Name'
+                            })
+                        ),
+                        React.createElement('div', { className: 'form-group' },
+                            React.createElement('label', { className: 'form-label' }, 'Email Address'),
+                            React.createElement('input', {
+                                className: 'form-input',
+                                type: 'email',
+                                value: email,
+                                onChange: (e) => setEmail(e.target.value),
+                                placeholder: 'your@company.com'
+                            })
+                        ),
+                        React.createElement('div', { className: 'form-group' },
+                            React.createElement('label', { className: 'form-label' }, 'Password'),
+                            React.createElement('input', {
+                                className: 'form-input',
+                                type: 'password',
+                                value: password,
+                                onChange: (e) => setPassword(e.target.value),
+                                placeholder: 'Enter password'
+                            })
+                        ),
+                        React.createElement('button', { type: 'submit', className: 'login-btn' }, 'Sign In')
+                    )
+                )
+            );
+        };
+
+        const Sidebar = ({ currentPage, onPageChange, company }) => (
+            React.createElement('div', { className: 'sidebar' },
+                React.createElement('div', { className: 'sidebar-brand' },
+                    React.createElement('span', { className: 'sidebar-brand-icon' }, '📱'),
+                    'Aplong NexGen'
+                ),
+                React.createElement('div', { className: 'nav-section' },
+                    React.createElement('div', { className: 'nav-label' }, 'Main'),
+                    React.createElement('button', {
+                        className: `nav-item ${currentPage === 'dashboard' ? 'active' : ''}`,
+                        onClick: () => onPageChange('dashboard')
+                    }, React.createElement('span', { className: 'nav-item-icon' }, '📊'), 'Dashboard'),
+                    React.createElement('button', {
+                        className: `nav-item ${currentPage === 'orders' ? 'active' : ''}`,
+                        onClick: () => onPageChange('orders')
+                    }, React.createElement('span', { className: 'nav-item-icon' }, '📦'), 'My Orders'),
+                    React.createElement('button', {
+                        className: `nav-item ${currentPage === 'place-order' ? 'active' : ''}`,
+                        onClick: () => onPageChange('place-order')
+                    }, React.createElement('span', { className: 'nav-item-icon' }, '🛒'), 'Place Order')
+                ),
+                React.createElement('div', { className: 'nav-section' },
+                    React.createElement('div', { className: 'nav-label' }, 'Returns'),
+                    React.createElement('button', {
+                        className: `nav-item ${currentPage === 'submit-rma' ? 'active' : ''}`,
+                        onClick: () => onPageChange('submit-rma')
+                    }, React.createElement('span', { className: 'nav-item-icon' }, '↩️'), 'Submit RMA'),
+                    React.createElement('button', {
+                        className: `nav-item ${currentPage === 'rmas' ? 'active' : ''}`,
+                        onClick: () => onPageChange('rmas')
+                    }, React.createElement('span', { className: 'nav-item-icon' }, '📋'), 'My RMAs')
+                ),
+                React.createElement('div', { className: 'nav-section' },
+                    React.createElement('div', { className: 'nav-label' }, 'More'),
+                    React.createElement('button', {
+                        className: `nav-item ${currentPage === 'promotions' ? 'active' : ''}`,
+                        onClick: () => onPageChange('promotions')
+                    }, React.createElement('span', { className: 'nav-item-icon' }, '🎉'), 'Promotions'),
+                    React.createElement('button', {
+                        className: `nav-item ${currentPage === 'account' ? 'active' : ''}`,
+                        onClick: () => onPageChange('account')
+                    }, React.createElement('span', { className: 'nav-item-icon' }, '⚙️'), 'My Account')
+                ),
+                React.createElement('div', { className: 'sidebar-spacer' }),
+                React.createElement('div', { className: 'sidebar-footer' },
+                    React.createElement('div', { className: 'company-name-small' }, company),
+                    React.createElement('button', { className: 'logout-btn', onClick: () => window.location.reload() }, '🚪 Logout')
+                )
+            )
+        );
+
+        const DashboardPage = ({ company, accountManager }) => (
+            React.createElement(React.Fragment, null,
+                React.createElement('div', { className: 'welcome-section' },
+                    React.createElement('div', { className: 'welcome-text' }, `Welcome back, ${company}! 👋`),
+                    React.createElement('div', { className: 'welcome-subtext' }, `Account Manager: ${accountManager}`)
+                ),
+                React.createElement('div', { className: 'stats-grid' },
+                    React.createElement('div', { className: 'stat-card' },
+                        React.createElement('div', { className: 'stat-icon' }, '📦'),
+                        React.createElement('div', { className: 'stat-label' }, 'Open Orders'),
+                        React.createElement('div', { className: 'stat-value' }, '2')
+                    ),
+                    React.createElement('div', { className: 'stat-card' },
+                        React.createElement('div', { className: 'stat-icon' }, '↩️'),
+                        React.createElement('div', { className: 'stat-label' }, 'Pending RMAs'),
+                        React.createElement('div', { className: 'stat-value' }, '1')
+                    ),
+                    React.createElement('div', { className: 'stat-card' },
+                        React.createElement('div', { className: 'stat-icon' }, '💷'),
+                        React.createElement('div', { className: 'stat-label' }, 'Account Balance'),
+                        React.createElement('div', { className: 'stat-value' }, '£4,250')
+                    ),
+                    React.createElement('div', { className: 'stat-card' },
+                        React.createElement('div', { className: 'stat-icon' }, '📅'),
+                        React.createElement('div', { className: 'stat-label' }, 'Last Order'),
+                        React.createElement('div', { className: 'stat-value' }, '15 Mar')
+                    )
+                ),
+                React.createElement('div', { className: 'promotions-banner' },
+                    React.createElement('h3', null, '🎉 Active Promotions'),
+                    React.createElement('p', null, 'Bulk discount: 15% off orders over £1,000 | Spring clearance: Selected items up to 25% off')
+                ),
+                React.createElement('h3', { style: { marginBottom: '16px', fontSize: '20px', fontWeight: '600' } }, 'Recent Orders'),
+                React.createElement('div', { className: 'table-container' },
+                    React.createElement('div', { className: 'table-header' },
+                        React.createElement('div', null, 'Order ID'),
+                        React.createElement('div', null, 'Date'),
+                        React.createElement('div', null, 'Status'),
+                        React.createElement('div', null, 'Items'),
+                        React.createElement('div', null, 'Total')
+                    ),
+                    MOCK_ORDERS.map(order =>
+                        React.createElement('div', { key: order.id, className: 'table-row' },
+                            React.createElement('div', null, order.id),
+                            React.createElement('div', null, order.date),
+                            React.createElement('div', null,
+                                React.createElement('span', { className: `status-badge status-${order.status.toLowerCase().replace(' ', '')}` }, order.status)
+                            ),
+                            React.createElement('div', null, order.items),
+                            React.createElement('div', null, `£${order.total.toFixed(2)}`)
+                        )
+                    )
+                )
+            )
+        );
+
+        const PlaceOrderPage = ({ onAddToast }) => {
+            const [search, setSearch] = useState('');
+            const [cart, setCart] = useState([]);
+            const [showCart, setShowCart] = useState(false);
+
+            const filteredProducts = MOCK_PRODUCTS.filter(p =>
+                p.name.toLowerCase().includes(search.toLowerCase()) ||
+                p.sku.toLowerCase().includes(search.toLowerCase())
+            );
+
+            const addToCart = (product) => {
+                const existing = cart.find(item => item.id === product.id);
+                if (existing) {
+                    setCart(cart.map(item =>
+                        item.id === product.id ? { ...item, qty: item.qty + 1 } : item
+                    ));
+                } else {
+                    setCart([...cart, { ...product, qty: 1 }]);
+                }
+                onAddToast(`Added ${product.name} to cart`, 'success');
+            };
+
+            const updateQty = (productId, newQty) => {
+                if (newQty <= 0) {
+                    setCart(cart.filter(item => item.id !== productId));
+                } else {
+                    setCart(cart.map(item =>
+                        item.id === productId ? { ...item, qty: newQty } : item
+                    ));
+                }
+            };
+
+            const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+            return React.createElement(React.Fragment, null,
+                React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' } },
+                    React.createElement('h2', { style: { fontSize: '20px', fontWeight: '600' } }, 'Place Order'),
+                    cart.length > 0 && React.createElement('button', {
+                        className: 'btn btn-secondary',
+                        onClick: () => setShowCart(!showCart)
+                    }, `📋 View Cart (${cart.length} items)`)
+                ),
+                showCart && cart.length > 0 && React.createElement('div', { className: 'cart-summary' },
+                    React.createElement('h3', { style: { marginBottom: '16px', fontSize: '18px', fontWeight: '600' } }, 'Your Cart'),
+                    cart.map(item =>
+                        React.createElement('div', { key: item.id, className: 'cart-item' },
+                            React.createElement('div', { className: 'cart-item-details' },
+                                React.createElement('div', { className: 'cart-item-name' }, item.name),
+                                React.createElement('div', { className: 'cart-item-sku' }, item.sku)
+                            ),
+                            React.createElement('div', { style: { display: 'flex', gap: '12px', alignItems: 'center' } },
+                                React.createElement('input', {
+                                    type: 'number',
+                                    min: '1',
+                                    value: item.qty,
+                                    onChange: (e) => updateQty(item.id, parseInt(e.target.value) || 1),
+                                    className: 'qty-input'
+                                }),
+                                React.createElement('div', { style: { minWidth: '100px', textAlign: 'right', fontWeight: '600' } }, `£${(item.price * item.qty).toFixed(2)}`)
+                            )
+                        )
+                    ),
+                    React.createElement('div', { className: 'cart-total' },
+                        React.createElement('span', null, 'Total:'),
+                        React.createElement('span', null, `£${cartTotal.toFixed(2)}`)
+                    ),
+                    React.createElement('button', {
+                        className: 'btn',
+                        onClick: () => {
+                            onAddToast(`Order submitted with ${cart.length} items - Reference: ORD-${Date.now().toString().slice(-6)}`, 'success');
+                            setCart([]);
+                            setShowCart(false);
+                        },
+                        style: { marginTop: '16px', width: '100%' }
+                    }, 'Submit Order')
+                ),
+                React.createElement('div', { className: 'search-box' },
+                    React.createElement('span', { className: 'search-icon' }, '🔍'),
+                    React.createElement('input', {
+                        type: 'text',
+                        className: 'search-input',
+                        placeholder: 'Search products by name or SKU...',
+                        value: search,
+                        onChange: (e) => setSearch(e.target.value)
+                    })
+                ),
+                React.createElement('div', { className: 'cards-grid' },
+                    (search ? filteredProducts : MOCK_PRODUCTS.slice(0, 8)).map(product =>
+                        React.createElement('div', { key: product.id, className: 'card product-card' },
+                            React.createElement('div', { className: 'product-sku' }, product.sku),
+                            React.createElement('div', { className: 'product-name' }, product.name),
+                            React.createElement('div', { className: 'product-grade' }, product.grade),
+                            React.createElement('div', { className: 'product-price' }, `£${product.price.toFixed(2)}`),
+                            React.createElement('div', { className: product.stock > 50 ? 'product-stock' : 'product-stock low' },
+                                `${product.stock} in stock`
+                            ),
+                            React.createElement('button', {
+                                className: 'btn btn-small',
+                                onClick: () => addToCart(product),
+                                style: { marginTop: 'auto' }
+                            }, '➕ Add to Cart')
+                        )
+                    )
+                )
+            );
+        };
+
+        const OrdersPage = ({ onSelectOrder }) => (
+            React.createElement(React.Fragment, null,
+                React.createElement('h2', { style: { marginBottom: '24px', fontSize: '20px', fontWeight: '600' } }, 'My Orders'),
+                React.createElement('div', { className: 'table-container' },
+                    React.createElement('div', { className: 'table-header' },
+                        React.createElement('div', null, 'Order ID'),
+                        React.createElement('div', null, 'Date'),
+                        React.createElement('div', null, 'Status'),
+                        React.createElement('div', null, 'Items'),
+                        React.createElement('div', null, 'Total')
+                    ),
+                    MOCK_ORDERS.map(order =>
+                        React.createElement('div', {
+                            key: order.id,
+                            className: 'table-row',
+                            onClick: () => onSelectOrder(order.id)
+                        },
+                            React.createElement('div', null, order.id),
+                            React.createElement('div', null, order.date),
+                            React.createElement('div', null,
+                                React.createElement('span', { className: `status-badge status-${order.status.toLowerCase().replace(' ', '')}` }, order.status)
+                            ),
+                            React.createElement('div', null, order.items),
+                            React.createElement('div', null, `£${order.total.toFixed(2)}`)
+                        )
+                    )
+                )
+            )
+        );
+
+        const OrderDetailModal = ({ orderId, onClose }) => {
+            const order = MOCK_ORDERS.find(o => o.id === orderId);
+            if (!order) return null;
+
+            const orderItems = [
+                { sku: 'SKU-IP15PM-SCR-OEM', name: 'iPhone 15 Pro Max Screen OEM', qty: 3, price: 48.50 },
+                { sku: 'SKU-IP15-USB-C', name: 'iPhone 15 USB-C Port', qty: 3, price: 8.90 },
+            ];
+
+            return React.createElement('div', { className: 'modal-overlay', onClick: onClose },
+                React.createElement('div', { className: 'modal', onClick: (e) => e.stopPropagation() },
+                    React.createElement('div', { className: 'modal-header' },
+                        React.createElement('span', null, `Order ${orderId}`),
+                        React.createElement('button', { className: 'modal-close', onClick: onClose }, '✕')
+                    ),
+                    React.createElement('div', { className: 'order-detail' },
+                        React.createElement('div', { className: 'order-header' },
+                            React.createElement('div', null,
+                                React.createElement('div', { className: 'order-field-label' }, 'Order ID'),
+                                React.createElement('div', { className: 'order-field-value' }, orderId)
+                            ),
+                            React.createElement('div', null,
+                                React.createElement('div', { className: 'order-field-label' }, 'Order Date'),
+                                React.createElement('div', { className: 'order-field-value' }, order.date)
+                            ),
+                            React.createElement('div', null,
+                                React.createElement('div', { className: 'order-field-label' }, 'Status'),
+                                React.createElement('div', { className: 'order-field-value' },
+                                    React.createElement('span', { className: `status-badge status-${order.status.toLowerCase().replace(' ', '')}` }, order.status)
+                                )
+                            ),
+                            React.createElement('div', null,
+                                React.createElement('div', { className: 'order-field-label' }, 'Total Amount'),
+                                React.createElement('div', { className: 'order-field-value' }, `£${order.total.toFixed(2)}`)
+                            )
+                        ),
+                        React.createElement('h4', { style: { marginBottom: '12px', fontWeight: '600' } }, 'Line Items'),
+                        React.createElement('div', { style: { marginBottom: '24px' } },
+                            orderItems.map((item, idx) =>
+                                React.createElement('div', { key: idx, className: 'cart-item' },
+                                    React.createElement('div', { className: 'cart-item-details' },
+                                        React.createElement('div', { className: 'cart-item-name' }, item.name),
+                                        React.createElement('div', { className: 'cart-item-sku' }, item.sku)
+                                    ),
+                                    React.createElement('div', { style: { textAlign: 'right' } },
+                                        React.createElement('div', null, `Qty: ${item.qty}`),
+                                        React.createElement('div', { style: { fontWeight: '600', color: 'var(--primary-light)' } }, `£${(item.price * item.qty).toFixed(2)}`)
+                                    )
+                                )
+                            )
+                        ),
+                        React.createElement('h4', { style: { marginBottom: '12px', fontWeight: '600' } }, 'Tracking & Timeline'),
+                        React.createElement('div', { className: 'timeline' },
+                            React.createElement('div', { className: 'timeline-item' },
+                                React.createElement('div', { className: 'timeline-dot active' }),
+                                React.createElement('div', { className: 'timeline-content' },
+                                    React.createElement('div', { className: 'timeline-label' }, 'Order Confirmed'),
+                                    React.createElement('div', { className: 'timeline-date' }, 'Mar 15, 2024 - 10:30 AM')
+                                )
+                            ),
+                            React.createElement('div', { className: 'timeline-item' },
+                                React.createElement('div', { className: 'timeline-dot active' }),
+                                React.createElement('div', { className: 'timeline-content' },
+                                    React.createElement('div', { className: 'timeline-label' }, 'Shipped'),
+                                    React.createElement('div', { className: 'timeline-date' }, 'Mar 16, 2024 - 2:15 PM'),
+                                    React.createElement('div', { className: 'timeline-date', style: { marginTop: '4px' } }, '🇬🇧 Tracking: UK-2024-1157892')
+                                )
+                            ),
+                            React.createElement('div', { className: 'timeline-item' },
+                                React.createElement('div', { className: 'timeline-dot active' }),
+                                React.createElement('div', { className: 'timeline-content' },
+                                    React.createElement('div', { className: 'timeline-label' }, 'Delivered'),
+                                    React.createElement('div', { className: 'timeline-date' }, 'Mar 17, 2024 - 1:45 PM')
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        };
+
+        const SubmitRMAPage = ({ onAddToast }) => {
+            const [selectedOrder, setSelectedOrder] = useState(null);
+            const [selectedItems, setSelectedItems] = useState([]);
+            const [reason, setReason] = useState('Defective');
+            const [notes, setNotes] = useState('');
+
+            const handleSubmitRMA = () => {
+                if (!selectedOrder || selectedItems.length === 0) {
+                    onAddToast('Please select an order and items', 'error');
+                    return;
+                }
+                const rmaRef = `RMA-${Date.now().toString().slice(-6)}`;
+                onAddToast(`RMA submitted successfully - Reference: ${rmaRef}`, 'success');
+                setSelectedOrder(null);
+                setSelectedItems([]);
+                setNotes('');
+            };
+
+            const toggleItem = (itemId) => {
+                setSelectedItems(selectedItems.includes(itemId)
+                    ? selectedItems.filter(id => id !== itemId)
+                    : [...selectedItems, itemId]
+                );
+            };
+
+            return React.createElement(React.Fragment, null,
+                React.createElement('h2', { style: { marginBottom: '24px', fontSize: '20px', fontWeight: '600' } }, 'Submit RMA'),
+                React.createElement('div', { className: 'card', style: { maxWidth: '600px' } },
+                    React.createElement('div', { className: 'form-group', style: { marginBottom: '24px' } },
+                        React.createElement('label', { className: 'form-label' }, 'Select Order'),
+                        React.createElement('select', {
+                            className: 'form-input',
+                            value: selectedOrder || '',
+                            onChange: (e) => {
+                                setSelectedOrder(e.target.value);
+                                setSelectedItems([]);
+                            }
+                        },
+                            React.createElement('option', { value: '' }, 'Choose an order...'),
+                            MOCK_ORDERS.map(order =>
+                                React.createElement('option', { key: order.id, value: order.id }, `${order.id} - ${order.date}`)
+                            )
+                        )
+                    ),
+                    selectedOrder && React.createElement('div', { className: 'form-group', style: { marginBottom: '24px' } },
+                        React.createElement('label', { className: 'form-label', style: { marginBottom: '12px' } }, 'Select Items to Return'),
+                        React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px' } },
+                            React.createElement('label', { style: { display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' } },
+                                React.createElement('input', {
+                                    type: 'checkbox',
+                                    checked: selectedItems.includes('item1'),
+                                    onChange: () => toggleItem('item1')
+                                }),
+                                'iPhone 15 Pro Max Screen OEM (qty: 3)'
+                            ),
+                            React.createElement('label', { style: { display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' } },
+                                React.createElement('input', {
+                                    type: 'checkbox',
+                                    checked: selectedItems.includes('item2'),
+                                    onChange: () => toggleItem('item2')
+                                }),
+                                'iPhone 15 USB-C Port (qty: 3)'
+                            )
+                        )
+                    ),
+                    React.createElement('div', { className: 'form-group', style: { marginBottom: '24px' } },
+                        React.createElement('label', { className: 'form-label' }, 'Reason for Return'),
+                        React.createElement('select', {
+                            className: 'form-input',
+                            value: reason,
+                            onChange: (e) => setReason(e.target.value)
+                        },
+                            React.createElement('option', null, 'Defective'),
+                            React.createElement('option', null, 'DOA (Dead on Arrival)'),
+                            React.createElement('option', null, 'Wrong Item'),
+                            React.createElement('option', null, 'Damaged'),
+                            React.createElement('option', null, 'Other')
+                        )
+                    ),
+                    React.createElement('div', { className: 'form-group', style: { marginBottom: '24px' } },
+                        React.createElement('label', { className: 'form-label' }, 'Photos (Mock)'),
+                        React.createElement('div', {
+                            style: {
+                                border: '2px dashed var(--border)',
+                                borderRadius: '6px',
+                                padding: '24px',
+                                textAlign: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
+                            }
+                        },
+                            React.createElement('div', { style: { fontSize: '32px', marginBottom: '8px' } }, '📸'),
+                            React.createElement('div', null, 'Click to upload or drag photos')
+                        )
+                    ),
+                    React.createElement('div', { className: 'form-group', style: { marginBottom: '24px' } },
+                        React.createElement('label', { className: 'form-label' }, 'Additional Notes'),
+                        React.createElement('textarea', {
+                            className: 'form-input',
+                            placeholder: 'Describe the issue...',
+                            value: notes,
+                            onChange: (e) => setNotes(e.target.value),
+                            style: { minHeight: '120px' }
+                        })
+                    ),
+                    React.createElement('button', {
+                        className: 'btn',
+                        onClick: handleSubmitRMA,
+                        style: { width: '100%' }
+                    }, '✓ Submit RMA')
+                )
+            );
+        };
+
+        const RMAsPage = () => (
+            React.createElement(React.Fragment, null,
+                React.createElement('h2', { style: { marginBottom: '24px', fontSize: '20px', fontWeight: '600' } }, 'My RMAs'),
+                React.createElement('div', { className: 'cards-grid', style: { gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' } },
+                    MOCK_RMAS.map(rma =>
+                        React.createElement('div', { key: rma.id, className: 'card', style: { display: 'flex', flexDirection: 'column', gap: '16px' } },
+                            React.createElement('div', null,
+                                React.createElement('div', { style: { fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '4px' } }, rma.id),
+                                React.createElement('div', { style: { fontSize: '16px', fontWeight: '600' } }, `From ${rma.orderId}`)
+                            ),
+                            React.createElement('div', null,
+                                React.createElement('div', { style: { fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '4px' } }, 'Status'),
+                                React.createElement('span', { className: `status-badge status-${rma.status.toLowerCase().replace(/\s+/g, '')}` }, rma.status)
+                            ),
+                            React.createElement('div', null,
+                                React.createElement('div', { style: { fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '4px' } }, 'Items'),
+                                React.createElement('div', null, `${rma.items} item(s) - Reason: ${rma.reason}`)
+                            ),
+                            React.createElement('div', null,
+                                React.createElement('div', { style: { fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '4px' } }, 'Submitted'),
+                                React.createElement('div', null, rma.date)
+                            ),
+                            React.createElement('div', { className: 'timeline', style: { marginTop: 'auto' } },
+                                React.createElement('div', { className: 'timeline-item' },
+                                    React.createElement('div', { className: 'timeline-dot active' }),
+                                    React.createElement('div', { className: 'timeline-content' },
+                                        React.createElement('div', { className: 'timeline-label', style: { fontSize: '13px' } }, 'Submitted')
+                                    )
+                                ),
+                                ['Under Review', 'Approved', 'Replacement Shipped', 'Closed'].map((step, idx) =>
+                                    React.createElement('div', { key: idx, className: 'timeline-item' },
+                                        React.createElement('div', { className: `timeline-dot ${rma.status.includes(step) ? 'active' : ''}` }),
+                                        React.createElement('div', { className: 'timeline-content' },
+                                            React.createElement('div', { className: 'timeline-label', style: { fontSize: '13px' } }, step)
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        );
+
+        const AccountPage = () => (
+            React.createElement(React.Fragment, null,
+                React.createElement('h2', { style: { marginBottom: '24px', fontSize: '20px', fontWeight: '600' } }, 'My Account'),
+                React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' } },
+                    React.createElement('div', { className: 'order-detail' },
+                        React.createElement('h3', { style: { marginBottom: '16px', fontSize: '18px', fontWeight: '600' } }, '🏢 Company Details'),
+                        React.createElement('div', { className: 'order-field-label' }, 'Company Name'),
+                        React.createElement('div', { style: { marginBottom: '16px', fontSize: '16px', fontWeight: '500' } }, 'TechFix London'),
+                        React.createElement('div', { className: 'order-field-label' }, 'Address'),
+                        React.createElement('div', { style: { marginBottom: '16px', fontSize: '14px' } }, '42 Brick Lane, London, E1 6QL 🇬🇧'),
+                        React.createElement('div', { className: 'order-field-label' }, 'Entity Type'),
+                        React.createElement('div', { fontSize: '14px' }, 'Limited Company (UK)')
+                    ),
+                    React.createElement('div', { className: 'order-detail' },
+                        React.createElement('h3', { style: { marginBottom: '16px', fontSize: '18px', fontWeight: '600' } }, '👤 Account Manager'),
+                        React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '12px' } },
+                            React.createElement('div', { style: { fontSize: '32px', textAlign: 'center' } }, '👨‍💼'),
+                            React.createElement('div', { style: { fontSize: '16px', fontWeight: '600', textAlign: 'center' } }, 'James Mitchell'),
+                            React.createElement('div', { className: 'order-field-label', style: { marginTop: '12px' } }, 'Email'),
+                            React.createElement('div', { style: { fontSize: '14px', marginBottom: '12px' } }, 'j.mitchell@aplong.com'),
+                            React.createElement('div', { className: 'order-field-label' }, 'Phone'),
+                            React.createElement('div', { style: { fontSize: '14px', marginBottom: '12px' } }, '+44 20 7946 0958'),
+                            React.createElement('div', { className: 'order-field-label' }, 'Available'),
+                            React.createElement('div', { style: { fontSize: '14px' } }, 'Mon-Fri, 9 AM - 5 PM GMT')
+                        )
+                    ),
+                    React.createElement('div', { className: 'order-detail' },
+                        React.createElement('h3', { style: { marginBottom: '16px', fontSize: '18px', fontWeight: '600' } }, '💰 Payment Terms'),
+                        React.createElement('div', null,
+                            React.createElement('div', { className: 'order-field-label' }, 'Payment Terms'),
+                            React.createElement('div', { style: { marginBottom: '16px', fontSize: '14px' } }, 'Net 30'),
+                            React.createElement('div', { className: 'order-field-label' }, 'Credit Limit'),
+                            React.createElement('div', { style: { marginBottom: '16px', fontSize: '16px', fontWeight: '600', color: 'var(--primary-light)' } }, '£15,000'),
+                            React.createElement('div', { className: 'order-field-label' }, 'Current Balance'),
+                            React.createElement('div', { fontSize: '16px', fontWeight: '600', color: 'var(--success)' }, '£4,250 available')
+                        )
+                    )
+                ),
+                React.createElement('div', { className: 'order-detail', style: { marginTop: '24px' } },
+                    React.createElement('h3', { style: { marginBottom: '16px', fontSize: '18px', fontWeight: '600' } }, '📞 Aplong Contact Details'),
+                    React.createElement('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' } },
+                        React.createElement('div', null,
+                            React.createElement('div', { style: { fontSize: '12px', color: 'var(--text-secondary)', fontWeight: '500', marginBottom: '4px' } }, '🇬🇧 UK Office'),
+                            React.createElement('div', { style: { fontSize: '13px' } }, 'Aplong NexGen Ltd, London'),
+                            React.createElement('div', { style: { fontSize: '13px' } }, '+44 20 7946 0958')
+                        ),
+                        React.createElement('div', null,
+                            React.createElement('div', { style: { fontSize: '12px', color: 'var(--text-secondary)', fontWeight: '500', marginBottom: '4px' } }, '🇳🇱 Netherlands Warehouse'),
+                            React.createElement('div', { style: { fontSize: '13px' } }, 'Aplong Distribution, Amsterdam'),
+                            React.createElement('div', { style: { fontSize: '13px' } }, '+31 20 1234 567')
+                        ),
+                        React.createElement('div', null,
+                            React.createElement('div', { style: { fontSize: '12px', color: 'var(--text-secondary)', fontWeight: '500', marginBottom: '4px' } }, '🇨🇳 China Warehouse'),
+                            React.createElement('div', { style: { fontSize: '13px' } }, 'Aplong Sourcing, Shenzhen'),
+                            React.createElement('div', { style: { fontSize: '13px' } }, '+86 755 1234 5678')
+                        )
+                    )
+                )
+            )
+        );
+
+        const PromotionsPage = () => {
+            const promotions = [
+                { id: 1, title: 'Bulk Discount', desc: '15% off orders over £1,000', validFrom: 'Now', validUntil: 'Apr 30', products: 'All products', icon: '📦' },
+                { id: 2, title: 'Spring Clearance', desc: 'Up to 25% off selected items', validFrom: 'Now', validUntil: 'Apr 15', products: 'iPhone 14, iPad Pro', icon: '🌸' },
+                { id: 3, title: 'Loyalty Reward', desc: 'Extra 5% off for repeat customers', validFrom: 'Always', validUntil: 'No limit', products: 'All products', icon: '⭐' },
+                { id: 4, title: 'Volume Purchase', desc: '20% off 50+ units of same product', validFrom: 'Now', validUntil: 'May 31', products: 'All screens & batteries', icon: '📈' },
+            ];
+
+            return React.createElement(React.Fragment, null,
+                React.createElement('h2', { style: { marginBottom: '24px', fontSize: '20px', fontWeight: '600' } }, 'Active Promotions'),
+                React.createElement('div', { className: 'cards-grid' },
+                    promotions.map(promo =>
+                        React.createElement('div', { key: promo.id, className: 'card' },
+                            React.createElement('div', { style: { fontSize: '32px', marginBottom: '12px' } }, promo.icon),
+                            React.createElement('div', { style: { fontSize: '18px', fontWeight: '600', marginBottom: '8px' } }, promo.title),
+                            React.createElement('div', { style: { fontSize: '14px', color: 'var(--primary-light)', marginBottom: '12px', fontWeight: '600' } }, promo.desc),
+                            React.createElement('div', { style: { fontSize: '13px', marginBottom: '4px' } },
+                                React.createElement('span', { style: { color: 'var(--text-secondary)' } }, 'Valid: '),
+                                `${promo.validFrom} - ${promo.validUntil}`
+                            ),
+                            React.createElement('div', { style: { fontSize: '13px', marginBottom: '16px' } },
+                                React.createElement('span', { style: { color: 'var(--text-secondary)' } }, 'Applies to: '),
+                                promo.products
+                            ),
+                            React.createElement('button', { className: 'btn btn-secondary', style: { width: '100%' } }, 'Apply to Cart')
+                        )
+                    )
+                )
+            );
+        };
+
+        const Portal = () => {
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [company, setCompany] = useState('');
+            const [email, setEmail] = useState('');
+            const [currentPage, setCurrentPage] = useState('dashboard');
+            const [toast, setToast] = useState(null);
+            const [selectedOrderId, setSelectedOrderId] = useState(null);
+
+            const handleLogin = (companyName, userEmail) => {
+                setCompany(companyName);
+                setEmail(userEmail);
+                setIsLoggedIn(true);
+            };
+
+            const addToast = (message, type) => {
+                setToast({ message, type });
+                setTimeout(() => setToast(null), 3000);
+            };
+
+            if (!isLoggedIn) {
+                return React.createElement(LoginPage, { onLogin: handleLogin });
+            }
+
+            const accountManager = 'James Mitchell (j.mitchell@aplong.com)';
+
+            return React.createElement('div', { className: 'app-container' },
+                React.createElement(Sidebar, { currentPage, onPageChange: setCurrentPage, company }),
+                React.createElement('div', { className: 'main-content' },
+                    React.createElement('div', { className: 'header' },
+                        React.createElement('h1', { className: 'header-title' },
+                            currentPage === 'dashboard' && '📊 Dashboard',
+                            currentPage === 'place-order' && '🛒 Place Order',
+                            currentPage === 'orders' && '📦 My Orders',
+                            currentPage === 'submit-rma' && '↩️ Submit RMA',
+                            currentPage === 'rmas' && '📋 My RMAs',
+                            currentPage === 'account' && '⚙️ My Account',
+                            currentPage === 'promotions' && '🎉 Promotions'
+                        )
+                    ),
+                    React.createElement('div', { className: 'content' },
+                        currentPage === 'dashboard' && React.createElement(DashboardPage, { company, accountManager }),
+                        currentPage === 'place-order' && React.createElement(PlaceOrderPage, { onAddToast: addToast }),
+                        currentPage === 'orders' && React.createElement(OrdersPage, { onSelectOrder: setSelectedOrderId }),
+                        currentPage === 'submit-rma' && React.createElement(SubmitRMAPage, { onAddToast: addToast }),
+                        currentPage === 'rmas' && React.createElement(RMAsPage, null),
+                        currentPage === 'account' && React.createElement(AccountPage, null),
+                        currentPage === 'promotions' && React.createElement(PromotionsPage, null)
+                    )
+                ),
+                selectedOrderId && React.createElement(OrderDetailModal, {
+                    orderId: selectedOrderId,
+                    onClose: () => setSelectedOrderId(null)
+                }),
+                toast && React.createElement(Toast, { message: toast.message, type: toast.type })
+            );
+        };
+
+        ReactDOM.render(React.createElement(Portal, null), document.getElementById('root'));
+    </script>
+</body>
+</html>

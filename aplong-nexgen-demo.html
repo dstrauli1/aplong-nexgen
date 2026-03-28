@@ -1,0 +1,2252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aplong NexGen</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#1e40af;--blue-600:#2563eb;--blue-500:#3b82f6;--blue-100:#dbeafe;--blue-50:#eff6ff;--green:#059669;--green-100:#d1fae5;--green-50:#ecfdf5;--orange:#d97706;--orange-100:#fef3c7;--red:#dc2626;--red-100:#fee2e2;--purple:#7c3aed;--purple-100:#ede9fe;--gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;--gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;--gray-800:#1f2937;--gray-900:#111827;
+--bg-main:var(--gray-50);--bg-card:#fff;--bg-sidebar:var(--gray-900);--bg-topbar:#fff;--text-primary:var(--gray-900);--text-secondary:var(--gray-500);--border-color:var(--gray-200);--table-hover:var(--blue-50);--topbar-border:var(--gray-200)}
+
+[data-theme="dark"]{--bg-main:#0f172a;--bg-card:#1e293b;--bg-sidebar:#0c1222;--bg-topbar:#1e293b;--text-primary:#e2e8f0;--text-secondary:#94a3b8;--border-color:#334155;--table-hover:#1e3a5f;--topbar-border:#334155;--gray-50:#1e293b;--gray-100:#334155;--gray-200:#475569;--gray-300:#64748b;--gray-400:#94a3b8;--gray-500:#94a3b8;--gray-600:#cbd5e1;--gray-700:#e2e8f0;--gray-800:#f1f5f9;--gray-900:#f8fafc}
+
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:var(--bg-main);color:var(--text-primary);overflow:hidden;height:100vh}
+.login-page{display:flex;align-items:center;justify-content:center;height:100vh;background:linear-gradient(135deg,#1e3a8a 0%,#312e81 100%)}
+.login-card{background:#fff;border-radius:16px;padding:48px;width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.login-card h1{font-size:1.8rem;font-weight:800;color:var(--blue);margin-bottom:4px}
+.login-card p{color:#6b7280;margin-bottom:32px;font-size:.9rem}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:.85rem;font-weight:600;color:#374151;margin-bottom:6px}
+.form-group input{width:100%;padding:10px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:.95rem;outline:none;transition:border .15s}
+.form-group input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.btn{padding:10px 20px;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--blue);color:#fff;width:100%;justify-content:center;padding:12px}
+.btn-primary:hover{background:var(--blue-600)}
+.btn-sm{padding:6px 12px;font-size:.8rem}
+.btn-outline{background:var(--bg-card);border:1px solid var(--border-color);color:var(--text-primary)}
+.btn-outline:hover{background:var(--gray-50);border-color:var(--gray-400)}
+.btn-success{background:var(--green);color:#fff}
+.btn-danger{background:var(--red);color:#fff}
+
+.app-layout{display:flex;height:100vh}
+.sidebar{width:240px;background:var(--bg-sidebar);color:#fff;display:flex;flex-direction:column;flex-shrink:0;transition:transform .3s ease;z-index:100}
+.sidebar-logo{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-logo h2{font-size:1.2rem;font-weight:800}
+.sidebar-logo h2 span{color:#93c5fd}
+.sidebar-logo .subtitle{font-size:.7rem;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.sidebar-nav{flex:1;padding:12px;overflow-y:auto}
+.nav-section{margin-bottom:16px}
+.nav-section-title{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;padding:8px 12px 4px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:.875rem;color:#9ca3af;transition:all .12s;margin-bottom:2px}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#e5e7eb}
+.nav-item.active{background:var(--blue);color:#fff;font-weight:500}
+.nav-item .icon{width:18px;text-align:center;font-size:.9rem}
+.nav-item .badge-count{margin-left:auto;background:var(--red);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:999px;font-weight:700}
+
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:56px;background:var(--bg-topbar);border-bottom:1px solid var(--topbar-border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-left h2{font-size:1.1rem;font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-search{padding:7px 14px;border:1px solid var(--border-color);border-radius:8px;width:240px;font-size:.85rem;outline:none;background:var(--bg-main);color:var(--text-primary)}
+.topbar-search:focus{border-color:var(--blue-500);background:var(--bg-card)}
+.notif-btn{position:relative;width:36px;height:36px;border-radius:8px;border:1px solid var(--border-color);background:var(--bg-card);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.notif-btn .dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--red);border-radius:50%;border:2px solid var(--bg-topbar)}
+.lang-select{padding:6px 10px;border:1px solid var(--border-color);border-radius:6px;font-size:.8rem;background:var(--bg-card);color:var(--text-primary);cursor:pointer}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700}
+.theme-toggle{width:36px;height:36px;border-radius:8px;border:1px solid var(--border-color);background:var(--bg-card);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all .2s}
+.theme-toggle:hover{background:var(--gray-100)}
+.hamburger{display:none;width:36px;height:36px;border-radius:8px;border:1px solid var(--border-color);background:var(--bg-card);cursor:pointer;align-items:center;justify-content:center;font-size:1.2rem}
+
+.content{flex:1;overflow-y:auto;padding:24px}
+
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:20px}
+.stat-card .stat-label{font-size:.8rem;color:var(--text-secondary);margin-bottom:4px}
+.stat-card .stat-value{font-size:1.8rem;font-weight:800;color:var(--text-primary)}
+.stat-card .stat-change{font-size:.8rem;margin-top:4px;display:flex;align-items:center;gap:4px}
+.stat-card .stat-change.up{color:var(--green)}
+.stat-card .stat-change.down{color:var(--red)}
+
+.card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between}
+.card-header h3{font-size:1rem;font-weight:700}
+.card-body{padding:0}
+
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 16px;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);font-weight:600;background:var(--bg-main);border-bottom:1px solid var(--border-color)}
+td{padding:12px 16px;border-bottom:1px solid var(--border-color);font-size:.875rem}
+tr:hover td{background:var(--table-hover)}
+tr:last-child td{border-bottom:none}
+tr.clickable-row{cursor:pointer}
+
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;font-weight:600}
+.badge-green{background:var(--green-100);color:var(--green)}
+.badge-blue{background:var(--blue-100);color:var(--blue)}
+.badge-orange{background:var(--orange-100);color:var(--orange)}
+.badge-red{background:var(--red-100);color:var(--red)}
+.badge-purple{background:var(--purple-100);color:var(--purple)}
+.badge-gray{background:var(--gray-100);color:var(--gray-600)}
+
+.chart-container{padding:20px}
+.chart-bar-group{display:flex;align-items:flex-end;gap:8px;height:180px;padding:0 4px;margin-bottom:8px}
+.chart-bar{flex:1;border-radius:4px 4px 0 0;min-width:20px;position:relative;transition:all .4s cubic-bezier(.4,0,.2,1);cursor:pointer;opacity:.85}
+.chart-bar:hover{opacity:1;transform:scaleY(1.02);transform-origin:bottom}
+.chart-bar .tooltip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--gray-800);color:#fff;padding:6px 12px;border-radius:6px;font-size:.75rem;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:10}
+.chart-bar .tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--gray-800)}
+.chart-bar:hover .tooltip{display:block;animation:fadeIn .15s ease}
+.chart-labels{display:flex;gap:8px}
+.chart-labels span{flex:1;text-align:center;font-size:.7rem;color:var(--text-secondary)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(4px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes growUp{from{height:0}to{height:var(--target-height)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+.tab-bar{display:flex;gap:0;border-bottom:2px solid var(--border-color);padding:0 20px}
+.tab{padding:10px 16px;font-size:.85rem;font-weight:500;color:var(--text-secondary);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .12s}
+.tab:hover{color:var(--text-primary)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+
+.entity-chips{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.entity-chip{padding:6px 14px;border-radius:999px;font-size:.8rem;font-weight:500;cursor:pointer;border:1px solid var(--border-color);background:var(--bg-card);transition:all .12s;color:var(--text-primary)}
+.entity-chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:1000;animation:fadeIn .2s ease}
+.modal{background:var(--bg-card);border-radius:16px;padding:32px;width:600px;max-width:90vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:slideDown .25s ease}
+.modal h3{font-size:1.2rem;font-weight:700;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{width:32px;height:32px;border-radius:8px;border:none;background:var(--gray-100);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:var(--gray-200)}
+
+.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:20px}
+.detail-item .detail-label{font-size:.75rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.detail-item .detail-value{font-size:.95rem;font-weight:600}
+
+.timeline{padding:20px}
+.timeline-item{display:flex;gap:16px;padding-bottom:20px;position:relative}
+.timeline-item:not(:last-child)::after{content:'';position:absolute;left:11px;top:28px;bottom:0;width:2px;background:var(--border-color)}
+.timeline-dot{width:24px;height:24px;border-radius:50%;background:var(--blue-100);border:2px solid var(--blue-500);flex-shrink:0;z-index:1}
+.timeline-dot.completed{background:var(--green);border-color:var(--green)}
+.timeline-content h4{font-size:.85rem;font-weight:600}
+.timeline-content p{font-size:.8rem;color:var(--text-secondary)}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-secondary)}
+.empty-state .icon{font-size:3rem;margin-bottom:12px}
+.empty-state p{font-size:.95rem}
+
+.kpi-row{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.kpi-pill{background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:12px 20px;flex:1;text-align:center;min-width:120px}
+.kpi-pill .kpi-val{font-size:1.4rem;font-weight:800;color:var(--text-primary)}
+.kpi-pill .kpi-label{font-size:.75rem;color:var(--text-secondary);margin-top:2px}
+
+.progress-bar{height:6px;background:var(--gray-200);border-radius:3px;overflow:hidden;margin-top:8px}
+.progress-bar .fill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.fill-green{background:var(--green)}
+.fill-blue{background:var(--blue-500)}
+.fill-orange{background:var(--orange)}
+.fill-red{background:var(--red)}
+
+.actions-row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+
+/* ── Company Profile ── */
+.company-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.company-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:20px;cursor:pointer;transition:all .15s}
+.company-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);transform:translateY(-2px)}
+.company-card .cc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.company-card .cc-name{font-weight:700;font-size:1rem}
+.company-card .cc-country{font-size:.8rem;color:var(--text-secondary)}
+.company-card .cc-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.company-card .cc-stat{font-size:.8rem}
+.company-card .cc-stat .val{font-weight:700;font-size:.95rem}
+.company-card .cc-stat .lbl{color:var(--text-secondary)}
+/* ── CRM Filter Bar ── */
+.crm-filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.crm-filter-input{padding:7px 14px;border:1px solid var(--border-color);border-radius:8px;font-size:.85rem;background:var(--bg-card);color:var(--text-primary);outline:none;min-width:200px}
+.crm-filter-input:focus{border-color:var(--blue-500)}
+.crm-filter-select{padding:7px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:.85rem;background:var(--bg-card);color:var(--text-primary);cursor:pointer}
+/* ── Search Autocomplete ── */
+.search-autocomplete{position:relative}
+.search-autocomplete input{width:100%;padding:10px 14px;border:1px solid var(--border-color);border-radius:8px;font-size:.95rem;background:var(--bg-card);color:var(--text-primary);outline:none}
+.search-autocomplete input:focus{border-color:var(--blue-500);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.sa-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);max-height:200px;overflow-y:auto;z-index:100}
+.sa-option{padding:10px 14px;cursor:pointer;font-size:.9rem;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center}
+.sa-option:last-child{border-bottom:none}
+.sa-option:hover,.sa-option.highlighted{background:var(--table-hover)}
+.sa-option .sa-sub{font-size:.75rem;color:var(--text-secondary)}
+.company-detail-back{display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--blue);font-weight:600;font-size:.9rem;margin-bottom:16px}
+.company-detail-back:hover{text-decoration:underline}
+.contact-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:16px;display:flex;gap:14px;align-items:center}
+.contact-card.primary{border-color:var(--blue-500);background:var(--blue-50)}
+.contact-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#fff;flex-shrink:0}
+.contact-info{flex:1}
+.contact-info .ci-name{font-weight:600;font-size:.9rem}
+.contact-info .ci-role{font-size:.8rem;color:var(--text-secondary)}
+.contact-info .ci-detail{font-size:.8rem;color:var(--text-secondary);margin-top:4px}
+
+/* ── Org Chart ── */
+.org-chart{display:flex;flex-direction:column;align-items:center;padding:20px;gap:0}
+.org-node{background:var(--bg-card);border:2px solid var(--border-color);border-radius:10px;padding:12px 20px;text-align:center;min-width:140px;position:relative}
+.org-node.director{border-color:var(--blue);background:var(--blue-50)}
+.org-node .on-name{font-weight:700;font-size:.85rem}
+.org-node .on-role{font-size:.75rem;color:var(--text-secondary)}
+.org-connector{width:2px;height:24px;background:var(--border-color);margin:0 auto}
+.org-h-line{height:2px;background:var(--border-color)}
+.org-row{display:flex;gap:24px;justify-content:center;position:relative}
+.org-branch{display:flex;flex-direction:column;align-items:center}
+.org-branch .org-connector{height:20px}
+
+/* ── Comms Inbox ── */
+.inbox-layout{display:flex;gap:0;height:calc(100vh - 160px);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;background:var(--bg-card)}
+.inbox-channels{width:180px;border-right:1px solid var(--border-color);padding:12px;flex-shrink:0;background:var(--bg-main)}
+.inbox-channel{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:.85rem;margin-bottom:4px;color:var(--text-primary);transition:all .1s}
+.inbox-channel:hover{background:var(--bg-card)}
+.inbox-channel.active{background:var(--blue);color:#fff;font-weight:600}
+.inbox-channel .ch-badge{margin-left:auto;background:var(--red);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:999px;font-weight:700}
+.inbox-list{width:320px;border-right:1px solid var(--border-color);overflow-y:auto;flex-shrink:0}
+.inbox-list-header{padding:14px 16px;border-bottom:1px solid var(--border-color);font-weight:700;font-size:.9rem;display:flex;justify-content:space-between;align-items:center}
+.inbox-item{padding:14px 16px;border-bottom:1px solid var(--border-color);cursor:pointer;transition:background .1s}
+.inbox-item:hover{background:var(--table-hover)}
+.inbox-item.active{background:var(--blue-50);border-left:3px solid var(--blue)}
+.inbox-item.unread .ii-subject{font-weight:700}
+.inbox-item .ii-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.inbox-item .ii-sender{font-weight:600;font-size:.85rem}
+.inbox-item .ii-time{font-size:.7rem;color:var(--text-secondary)}
+.inbox-item .ii-subject{font-size:.85rem;margin-bottom:2px}
+.inbox-item .ii-preview{font-size:.8rem;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inbox-item .ii-meta{display:flex;gap:6px;margin-top:6px}
+.inbox-thread{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.inbox-thread-header{padding:16px 20px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center}
+.inbox-thread-header h3{font-size:1rem;font-weight:700}
+.inbox-messages{flex:1;overflow-y:auto;padding:20px}
+.msg-bubble{max-width:75%;margin-bottom:16px;display:flex;flex-direction:column}
+.msg-bubble.sent{align-self:flex-end;align-items:flex-end}
+.msg-bubble.received{align-self:flex-start;align-items:flex-start}
+.msg-bubble .msg-content{padding:12px 16px;border-radius:12px;font-size:.9rem;line-height:1.5}
+.msg-bubble.sent .msg-content{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.msg-bubble.received .msg-content{background:var(--gray-100);color:var(--text-primary);border-bottom-left-radius:4px}
+.msg-bubble .msg-meta{font-size:.7rem;color:var(--text-secondary);margin-top:4px;display:flex;gap:8px}
+.inbox-compose{padding:16px 20px;border-top:1px solid var(--border-color);display:flex;gap:8px;align-items:flex-end}
+.inbox-compose textarea{flex:1;padding:10px 14px;border:1px solid var(--border-color);border-radius:8px;font-size:.85rem;resize:none;min-height:40px;max-height:100px;font-family:inherit;background:var(--bg-card);color:var(--text-primary)}
+.inbox-empty{flex:1;display:flex;align-items:center;justify-content:center;color:var(--text-secondary)}
+
+/* ── Quick Actions ── */
+.quick-actions{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.quick-action{background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:14px 20px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px;flex:1;min-width:160px}
+.quick-action:hover{border-color:var(--blue-500);background:var(--blue-50)}
+.quick-action .qa-icon{font-size:1.3rem}
+.quick-action .qa-text{font-weight:600;font-size:.85rem}
+
+/* ── Activity Feed ── */
+.activity-feed{padding:16px 20px}
+.activity-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-color);align-items:flex-start}
+.activity-item:last-child{border-bottom:none}
+.activity-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.activity-text{flex:1;font-size:.85rem;line-height:1.4}
+.activity-text .at-time{color:var(--text-secondary);font-size:.75rem;margin-top:2px}
+
+@media(max-width:768px){
+  .company-grid{grid-template-columns:1fr}
+  .inbox-layout{flex-direction:column;height:auto}
+  .inbox-channels{width:auto;border-right:none;border-bottom:1px solid var(--border-color);display:flex;overflow-x:auto;padding:8px}
+  .inbox-list{width:auto;max-height:300px;border-right:none;border-bottom:1px solid var(--border-color)}
+  .org-row{flex-wrap:wrap}
+  .quick-actions{flex-direction:column}
+}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--gray-800);color:#fff;padding:12px 20px;border-radius:10px;font-size:.9rem;z-index:2000;display:flex;align-items:center;gap:8px;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* ── Notification Dropdown ── */
+.notif-dropdown{position:absolute;top:calc(100% + 8px);right:0;width:360px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.15);z-index:500;animation:slideDown .2s ease;overflow:hidden}
+.notif-dropdown-header{padding:14px 16px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:.9rem}
+.notif-item{padding:12px 16px;border-bottom:1px solid var(--border-color);cursor:pointer;transition:background .1s;display:flex;gap:12px;align-items:flex-start}
+.notif-item:hover{background:var(--table-hover)}
+.notif-item:last-child{border-bottom:none}
+.notif-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.notif-text{flex:1}
+.notif-text .notif-title{font-size:.85rem;font-weight:500;margin-bottom:2px}
+.notif-text .notif-time{font-size:.75rem;color:var(--text-secondary)}
+.notif-unread{width:8px;height:8px;border-radius:50%;background:var(--blue-500);flex-shrink:0;margin-top:6px}
+
+/* ── Kanban Board ── */
+.kanban-board{display:flex;gap:16px;overflow-x:auto;padding-bottom:16px;min-height:400px}
+.kanban-column{min-width:240px;flex:1;background:var(--bg-main);border:1px solid var(--border-color);border-radius:12px;display:flex;flex-direction:column}
+.kanban-column-header{padding:14px 16px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center}
+.kanban-column-header h4{font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.kanban-count{background:var(--gray-200);color:var(--text-secondary);font-size:.7rem;padding:2px 8px;border-radius:999px;font-weight:600}
+.kanban-cards{flex:1;padding:8px;overflow-y:auto}
+.kanban-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:14px;margin-bottom:8px;cursor:grab;transition:all .15s}
+.kanban-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.08);transform:translateY(-1px)}
+.kanban-card.dragging{opacity:.5;transform:rotate(2deg)}
+.kanban-card .kc-company{font-weight:600;font-size:.9rem;margin-bottom:4px}
+.kanban-card .kc-contact{font-size:.8rem;color:var(--text-secondary);margin-bottom:8px}
+.kanban-card .kc-footer{display:flex;justify-content:space-between;align-items:center}
+.kanban-card .kc-value{font-weight:700;font-size:.85rem;color:var(--blue)}
+.kanban-card .kc-score{font-size:.7rem;padding:2px 8px;border-radius:999px;font-weight:600}
+
+/* ── Sidebar Overlay for Mobile ── */
+.sidebar-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:99}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .sidebar{position:fixed;top:0;left:0;bottom:0;transform:translateX(-100%);z-index:100}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.open{display:block}
+  .hamburger{display:flex}
+  .topbar-search{width:140px}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .detail-grid{grid-template-columns:1fr}
+  .kanban-board{flex-direction:column}
+  .kanban-column{min-width:auto}
+  .kpi-row{flex-wrap:wrap}
+  .kpi-pill{min-width:calc(50% - 8px)}
+}
+@media(max-width:480px){
+  .stat-grid{grid-template-columns:1fr}
+  .topbar-search{display:none}
+  .content{padding:16px}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useCallback, useRef } = React;
+
+// ─── Sample Data ────────────────────────────────────────────
+const ORDERS = [
+  {id:'ORD-2026-000147',company:'TechFix London',items:3,total:'\u00A32,845.00',currency:'GBP',status:'PROCESSING',date:'2026-03-28',warehouse:'AMS-HUB',
+   lineItems:[{name:'iPhone 15 Pro Max Screen',qty:1,price:'\u00A389.50'},{name:'iPhone 14 Pro Max Battery',qty:1,price:'\u00A322.00'},{name:'iPhone 15 USB-C Port',qty:1,price:'\u00A312.50'}],
+   timeline:[{event:'Order Created',time:'2026-03-28 09:15',done:true},{event:'Payment Confirmed',time:'2026-03-28 09:20',done:true},{event:'Processing Started',time:'2026-03-28 10:00',done:true},{event:'Stock Allocated',time:'Pending',done:false},{event:'Dispatched',time:'Pending',done:false}]},
+  {id:'ORD-2026-000146',company:'MobilePartsNL',items:8,total:'\u20AC6,120.50',currency:'EUR',status:'CONFIRMED',date:'2026-03-28',warehouse:'AMS-HUB',
+   lineItems:[{name:'iPhone 15 Pro Screen Assembly',qty:4,price:'\u20AC79.00'},{name:'iPhone 15 Pro Max Rear Camera',qty:4,price:'\u20AC54.00'}],
+   timeline:[{event:'Order Created',time:'2026-03-28 08:30',done:true},{event:'Payment Confirmed',time:'2026-03-28 08:45',done:true},{event:'Processing',time:'Pending',done:false}]},
+  {id:'ORD-2026-000145',company:'Shenzhen iRepair',items:25,total:'\u00A589,400.00',currency:'CNY',status:'DISPATCHED',date:'2026-03-27',warehouse:'SZ-MAIN',
+   lineItems:[{name:'Mixed Screen Assemblies',qty:20,price:'\u00A53,200'},{name:'Battery Pack (bulk)',qty:5,price:'\u00A5680'}],
+   timeline:[{event:'Order Created',time:'2026-03-27 06:00',done:true},{event:'Payment Confirmed',time:'2026-03-27 06:30',done:true},{event:'Processing',time:'2026-03-27 07:00',done:true},{event:'Dispatched',time:'2026-03-27 14:00',done:true},{event:'Delivery',time:'ETA 2026-03-30',done:false}]},
+  {id:'ORD-2026-000144',company:'PhoneDoc Berlin',items:5,total:'\u20AC3,750.00',currency:'EUR',status:'DELIVERED',date:'2026-03-27',warehouse:'AMS-HUB',
+   lineItems:[{name:'iPhone 14 Pro Max Screen',qty:5,price:'\u20AC72.00'}],
+   timeline:[{event:'Order Created',time:'2026-03-25 10:00',done:true},{event:'Confirmed',time:'2026-03-25 10:30',done:true},{event:'Dispatched',time:'2026-03-26 08:00',done:true},{event:'Delivered',time:'2026-03-27 14:00',done:true}]},
+  {id:'ORD-2026-000143',company:'CellParts Direct',items:12,total:'\u00A38,940.00',currency:'GBP',status:'PROCESSING',date:'2026-03-26',warehouse:'SZ-MAIN',
+   lineItems:[{name:'iPhone 15 Pro Max Screen',qty:8,price:'\u00A389.50'},{name:'iPhone 15 Pro Screen',qty:4,price:'\u00A379.00'}],
+   timeline:[{event:'Order Created',time:'2026-03-26 11:00',done:true},{event:'Confirmed',time:'2026-03-26 11:15',done:true},{event:'Processing',time:'2026-03-26 12:00',done:true},{event:'Dispatch',time:'Pending',done:false}]},
+  {id:'ORD-2026-000142',company:'Smart Repair Paris',items:2,total:'\u20AC1,280.00',currency:'EUR',status:'ALLOCATED',date:'2026-03-26',warehouse:'AMS-HUB',
+   lineItems:[{name:'iPhone 15 Pro Max Rear Camera',qty:2,price:'\u20AC54.00'}],
+   timeline:[{event:'Order Created',time:'2026-03-26 09:00',done:true},{event:'Confirmed',time:'2026-03-26 09:10',done:true},{event:'Allocated',time:'2026-03-26 10:00',done:true},{event:'Dispatch',time:'Pending',done:false}]},
+  {id:'ORD-2026-000141',company:'TechFix London',items:6,total:'\u00A34,520.00',currency:'GBP',status:'CLOSED',date:'2026-03-25',warehouse:'UK-FWD',
+   lineItems:[{name:'iPhone 14 Pro Max Battery',qty:6,price:'\u00A322.00'}],
+   timeline:[{event:'Order Created',time:'2026-03-23',done:true},{event:'Dispatched',time:'2026-03-24',done:true},{event:'Delivered',time:'2026-03-25',done:true},{event:'Closed',time:'2026-03-25',done:true}]},
+  {id:'ORD-2026-000140',company:'MobilePartsNL',items:15,total:'\u20AC11,250.00',currency:'EUR',status:'DELIVERED',date:'2026-03-25',warehouse:'AMS-HUB',
+   lineItems:[{name:'iPhone 15 Pro Screen Assembly',qty:10,price:'\u20AC79.00'},{name:'iPhone 15 USB-C Charging Port',qty:5,price:'\u20AC12.50'}],
+   timeline:[{event:'Order Created',time:'2026-03-22',done:true},{event:'Dispatched',time:'2026-03-23',done:true},{event:'Delivered',time:'2026-03-25',done:true}]},
+];
+
+const PRODUCTS = [
+  {sku:'APL-SCR-15PM-OEM',name:'iPhone 15 Pro Max Screen Assembly',category:'Screens',grade:'OEM',price:'\u00A389.50',stock:{sz:245,ams:128,uk:0},status:'In Stock'},
+  {sku:'APL-SCR-15P-OEM',name:'iPhone 15 Pro Screen Assembly',category:'Screens',grade:'OEM',price:'\u00A379.00',stock:{sz:312,ams:95,uk:0},status:'In Stock'},
+  {sku:'APL-SCR-14PM-OEM',name:'iPhone 14 Pro Max Screen Assembly',category:'Screens',grade:'OEM',price:'\u00A372.00',stock:{sz:180,ams:62,uk:0},status:'In Stock'},
+  {sku:'APL-BAT-15PM',name:'iPhone 15 Pro Max Battery',category:'Batteries',grade:'OEM',price:'\u00A324.50',stock:{sz:520,ams:340,uk:0},status:'In Stock'},
+  {sku:'APL-BAT-14PM',name:'iPhone 14 Pro Max Battery',category:'Batteries',grade:'OEM',price:'\u00A322.00',stock:{sz:410,ams:285,uk:0},status:'In Stock'},
+  {sku:'APL-CAM-15PM-R',name:'iPhone 15 Pro Max Rear Camera',category:'Cameras',grade:'OEM',price:'\u00A354.00',stock:{sz:95,ams:12,uk:0},status:'Low Stock'},
+  {sku:'APL-CHG-15-USB',name:'iPhone 15 USB-C Charging Port',category:'Charging',grade:'Premium AM',price:'\u00A312.50',stock:{sz:680,ams:420,uk:0},status:'In Stock'},
+  {sku:'APL-SCR-15PM-PAM',name:'iPhone 15 Pro Max Screen Assembly',category:'Screens',grade:'Premium AM',price:'\u00A345.00',stock:{sz:0,ams:0,uk:0},status:'Out of Stock'},
+];
+
+const INVOICES = [
+  {id:'UK-INV-2026-000089',company:'TechFix London',entity:'UK',amount:'\u00A32,845.00',status:'ISSUED',issued:'2026-03-28',due:'2026-04-27',paid:'\u00A30.00'},
+  {id:'NL-INV-2026-000156',company:'MobilePartsNL',entity:'NL',amount:'\u20AC6,120.50',status:'SENT',issued:'2026-03-28',due:'2026-04-27',paid:'\u20AC0.00'},
+  {id:'CN-INV-2026-000312',company:'Shenzhen iRepair',entity:'CN',amount:'\u00A589,400.00',status:'PAID',issued:'2026-03-20',due:'2026-04-19',paid:'\u00A589,400.00'},
+  {id:'NL-INV-2026-000155',company:'PhoneDoc Berlin',entity:'NL',amount:'\u20AC3,750.00',status:'PARTIALLY_PAID',issued:'2026-03-18',due:'2026-04-17',paid:'\u20AC2,000.00'},
+  {id:'UK-INV-2026-000088',company:'CellParts Direct',entity:'UK',amount:'\u00A38,940.00',status:'OVERDUE',issued:'2026-02-15',due:'2026-03-17',paid:'\u00A30.00'},
+  {id:'NL-INV-2026-000154',company:'Smart Repair Paris',entity:'NL',amount:'\u20AC1,280.00',status:'PAID',issued:'2026-03-10',due:'2026-04-09',paid:'\u20AC1,280.00'},
+];
+
+const RMAS = [
+  {id:'RMA-2026-0034',order:'ORD-2026-000130',company:'TechFix London',reason:'Faulty Product',items:2,status:'INSPECTED',sla:72,slaMax:96},
+  {id:'RMA-2026-0033',order:'ORD-2026-000128',company:'PhoneDoc Berlin',reason:'Wrong Item',items:1,status:'RECEIVED',sla:48,slaMax:96},
+  {id:'RMA-2026-0032',order:'ORD-2026-000125',company:'MobilePartsNL',reason:'Warranty Claim',items:3,status:'IN_TRANSIT',sla:24,slaMax:96},
+  {id:'RMA-2026-0031',order:'ORD-2026-000120',company:'CellParts Direct',reason:'Faulty Product',items:1,status:'CLOSED',sla:96,slaMax:96},
+];
+
+const LEADS = [
+  {name:'RepairTech GmbH',contact:'Hans Mueller',stage:'NEGOTIATION',value:'\u20AC15,000',score:85,lastContact:'2 hours ago'},
+  {name:'FixIt Pro Sweden',contact:'Erik Lindqvist',stage:'DEMO_SAMPLE',value:'\u20AC8,500',score:72,lastContact:'1 day ago'},
+  {name:'QuickFix Ireland',contact:'Sean O\'Brien',stage:'QUALIFIED',value:'\u00A36,200',score:65,lastContact:'3 days ago'},
+  {name:'Mobile Hospital Rome',contact:'Marco Rossi',stage:'CONTACTED',value:'\u20AC12,000',score:45,lastContact:'5 days ago'},
+  {name:'Screen Masters Poland',contact:'Jakub Nowak',stage:'PROSPECT',value:'\u20AC20,000',score:30,lastContact:'1 week ago'},
+];
+
+const SHIPMENTS = [
+  {id:'SHP-28451',order:'ORD-2026-000145',carrier:'SF Express',tracking:'SF7892341256',status:'IN_TRANSIT',origin:'SZ-MAIN',dest:'Shenzhen iRepair',eta:'2026-03-30'},
+  {id:'SHP-28450',order:'ORD-2026-000144',carrier:'PostNL',tracking:'3SPOST1234567',status:'DELIVERED',origin:'AMS-HUB',dest:'PhoneDoc Berlin',eta:'2026-03-27'},
+  {id:'SHP-28449',order:'ORD-2026-000141',carrier:'DHL Express',tracking:'1234567890',status:'DELIVERED',origin:'UK-FWD',dest:'TechFix London',eta:'2026-03-25'},
+];
+
+const NOTIFICATIONS = [
+  {id:1,icon:'\u{1F4E6}',bg:'var(--blue-100)',title:'New order ORD-2026-000147 from TechFix London',time:'5 min ago',unread:true},
+  {id:2,icon:'\u{1F4B3}',bg:'var(--green-100)',title:'Payment received: \u00A589,400 from Shenzhen iRepair',time:'1 hour ago',unread:true},
+  {id:3,icon:'\u{1F69A}',bg:'var(--purple-100)',title:'Shipment SHP-28451 picked up by SF Express',time:'2 hours ago',unread:true},
+  {id:4,icon:'\u26A0\uFE0F',bg:'var(--red-100)',title:'SLA warning: RMA-2026-0034 at 75% threshold',time:'3 hours ago',unread:false},
+  {id:5,icon:'\u{1F504}',bg:'var(--orange-100)',title:'RMA-2026-0033 received at warehouse',time:'5 hours ago',unread:false},
+  {id:6,icon:'\u{1F465}',bg:'var(--blue-100)',title:'New lead: RepairTech GmbH moved to Negotiation',time:'Yesterday',unread:false},
+];
+
+const COMPANIES = [
+  {id:'C001',name:'TechFix London',country:'\u{1F1EC}\u{1F1E7} United Kingdom',status:'Active',since:'2023-06',revenue:'\u00A3148,500',orders:42,creditLimit:'\u00A320,000',terms:'Net 30',entity:'UK',
+   contacts:[
+    {name:'David Richards',role:'Managing Director',email:'d.richards@techfix.co.uk',phone:'+44 20 7123 4567',isPrimary:true},
+    {name:'Sarah Mitchell',role:'Purchasing Manager',email:'s.mitchell@techfix.co.uk',phone:'+44 20 7123 4568',isPrimary:false},
+    {name:'Tom Henderson',role:'Accounts Payable',email:'accounts@techfix.co.uk',phone:'+44 20 7123 4570',isPrimary:false},
+    {name:'Jake Perry',role:'Warehouse Manager',email:'warehouse@techfix.co.uk',phone:'+44 20 7123 4571',isPrimary:false},
+   ],notes:[{time:'2026-03-28',text:'Placed large screen order, requested priority dispatch',by:'James Wilson'},{time:'2026-03-20',text:'Credit limit increased from \u00A315k to \u00A320k',by:'Li Wei'},{time:'2026-02-10',text:'Annual review meeting completed',by:'James Wilson'}]},
+  {id:'C002',name:'MobilePartsNL',country:'\u{1F1F3}\u{1F1F1} Netherlands',status:'Active',since:'2022-11',revenue:'\u20AC210,400',orders:68,creditLimit:'\u20AC30,000',terms:'Net 30',entity:'NL',
+   contacts:[
+    {name:'Pieter van den Berg',role:'CEO',email:'pieter@mobilepartsnl.nl',phone:'+31 20 555 0101',isPrimary:true},
+    {name:'Anna de Groot',role:'Purchasing',email:'inkoop@mobilepartsnl.nl',phone:'+31 20 555 0102',isPrimary:false},
+    {name:'Mark Jansen',role:'Finance Manager',email:'finance@mobilepartsnl.nl',phone:'+31 20 555 0103',isPrimary:false},
+   ],notes:[{time:'2026-03-28',text:'New bulk order for iPhone 15 parts',by:'Emma Thompson'},{time:'2026-03-10',text:'Payment received on time as always',by:'Li Wei'}]},
+  {id:'C003',name:'Shenzhen iRepair',country:'\u{1F1E8}\u{1F1F3} China',status:'Active',since:'2024-02',revenue:'\u00A5534,000',orders:15,creditLimit:'\u00A5200,000',terms:'Prepayment',entity:'CN',
+   contacts:[
+    {name:'Zhang Wei',role:'General Manager',email:'zhangwei@irepair.cn',phone:'+86 755 8888 1234',isPrimary:true},
+    {name:'Liu Mei',role:'Procurement',email:'procurement@irepair.cn',phone:'+86 755 8888 1235',isPrimary:false},
+    {name:'Chen Jie',role:'Accounts',email:'accounts@irepair.cn',phone:'+86 755 8888 1236',isPrimary:false},
+   ],notes:[{time:'2026-03-27',text:'Large mixed order dispatched via SF Express',by:'Sarah Chen'}]},
+  {id:'C004',name:'PhoneDoc Berlin',country:'\u{1F1E9}\u{1F1EA} Germany',status:'Active',since:'2024-06',revenue:'\u20AC86,250',orders:28,creditLimit:'\u20AC15,000',terms:'Net 14',entity:'NL',
+   contacts:[
+    {name:'Klaus Schneider',role:'Owner / Director',email:'klaus@phonedoc.de',phone:'+49 30 1234 5678',isPrimary:true},
+    {name:'Lena Weber',role:'Parts Buyer',email:'parts@phonedoc.de',phone:'+49 30 1234 5679',isPrimary:false},
+   ],notes:[{time:'2026-03-27',text:'Delivery confirmed. Very happy with quality.',by:'Emma Thompson'}]},
+  {id:'C005',name:'CellParts Direct',country:'\u{1F1EC}\u{1F1E7} United Kingdom',status:'Active',since:'2023-09',revenue:'\u00A398,400',orders:38,creditLimit:'\u00A315,000',terms:'Net 30',entity:'UK',
+   contacts:[
+    {name:'Alan Brooks',role:'Director',email:'alan@cellpartsdirect.co.uk',phone:'+44 121 456 7890',isPrimary:true},
+    {name:'Rachel Stone',role:'Purchasing',email:'orders@cellpartsdirect.co.uk',phone:'+44 121 456 7891',isPrimary:false},
+    {name:'Mike Taylor',role:'Accounts',email:'accounts@cellpartsdirect.co.uk',phone:'+44 121 456 7892',isPrimary:false},
+    {name:'Dave Wilson',role:'Warehouse',email:'warehouse@cellpartsdirect.co.uk',phone:'+44 121 456 7893',isPrimary:false},
+   ],notes:[{time:'2026-03-26',text:'OVERDUE invoice \u00A38,940 - follow up required',by:'Li Wei'},{time:'2026-03-01',text:'Requested net 45 terms, declined',by:'James Wilson'}]},
+  {id:'C006',name:'Smart Repair Paris',country:'\u{1F1EB}\u{1F1F7} France',status:'Active',since:'2025-01',revenue:'\u20AC28,400',orders:12,creditLimit:'\u20AC10,000',terms:'Net 14',entity:'NL',
+   contacts:[
+    {name:'Antoine Dupont',role:'Founder',email:'antoine@smartrepair.fr',phone:'+33 1 42 68 5300',isPrimary:true},
+    {name:'Claire Martin',role:'Operations',email:'ops@smartrepair.fr',phone:'+33 1 42 68 5301',isPrimary:false},
+   ],notes:[{time:'2026-03-26',text:'New customer settling in well. Small orders but growing.',by:'Emma Thompson'}]},
+];
+
+const CONVERSATIONS = [
+  {id:1,channel:'internal',sender:'Sarah Chen',senderRole:'Warehouse Manager',company:'Internal',subject:'Stock count discrepancy SZ-MAIN',preview:'Found 15 units short on APL-CAM-15PM-R...',time:'10 min ago',unread:true,
+   messages:[
+    {from:'Sarah Chen',text:'Hi team, found a discrepancy during stock count at SZ-MAIN. APL-CAM-15PM-R shows 95 in system but only 80 on shelf. Can someone check the recent dispatch logs?',time:'10:15 AM',sent:false},
+    {from:'You',text:'Checking now. Let me pull the dispatch records from the last 48 hours.',time:'10:18 AM',sent:true},
+    {from:'Sarah Chen',text:'Thanks. Also noticed APL-BAT-15PM might be off by a few units. Could be a scanning issue.',time:'10:20 AM',sent:false},
+   ]},
+  {id:2,channel:'email',sender:'Hans Mueller',senderRole:'RepairTech GmbH',company:'RepairTech GmbH',subject:'Bulk pricing request for Q2',preview:'We are looking to place a large order for Q2...',time:'1 hour ago',unread:true,
+   messages:[
+    {from:'Hans Mueller',text:'Dear Aplong team,\n\nWe are interested in placing a bulk order for Q2 2026. Could you provide tiered pricing for:\n- 500x iPhone 15 Pro Max Screens\n- 200x iPhone 15 Pro Screens\n- 300x iPhone 15 batteries\n\nWe would need delivery to our Hamburg warehouse.\n\nBest regards,\nHans Mueller',time:'9:30 AM',sent:false},
+    {from:'You',text:'Hi Hans,\n\nThank you for your interest! I will prepare a custom quotation for these quantities and have it to you by end of day tomorrow.\n\nBest,\nJames Wilson',time:'10:45 AM',sent:true},
+   ]},
+  {id:3,channel:'whatsapp',sender:'Sean O\'Brien',senderRole:'QuickFix Ireland',company:'QuickFix Ireland',subject:'Order status check',preview:'Hey, any update on my order? Still showing processing...',time:'2 hours ago',unread:false,
+   messages:[
+    {from:'Sean O\'Brien',text:'Hey, any update on my order? Still showing processing since yesterday.',time:'8:15 AM',sent:false},
+    {from:'You',text:'Hi Sean, checking now. Your order ORD-2026-000139 is being picked at AMS-HUB. Should dispatch today.',time:'8:20 AM',sent:true},
+    {from:'Sean O\'Brien',text:'Grand, thanks for the quick reply! \ud83d\udc4d',time:'8:22 AM',sent:false},
+   ]},
+  {id:4,channel:'wechat',sender:'Li Xiaoming',senderRole:'Shenzhen iRepair',company:'Shenzhen iRepair',subject:'Quality issue with latest batch',preview:'3 screens from batch SZ-B2026-0312 have dead pixels...',time:'3 hours ago',unread:true,
+   messages:[
+    {from:'Li Xiaoming',text:'We received the latest batch but found 3 screens with dead pixels out of 25. Batch number SZ-B2026-0312. Can you arrange replacements?',time:'7:00 AM',sent:false},
+    {from:'You',text:'Sorry to hear that. I will raise an RMA immediately. Please send photos of the affected screens to rma@aplong.com and we will expedite replacements.',time:'7:30 AM',sent:true},
+    {from:'Li Xiaoming',text:'Photos sent. Thank you for the fast response.',time:'7:45 AM',sent:false},
+   ]},
+  {id:5,channel:'internal',sender:'Li Wei',senderRole:'Finance',company:'Internal',subject:'Overdue invoice - CellParts Direct',preview:'UK-INV-2026-000088 is now 11 days overdue...',time:'5 hours ago',unread:false,
+   messages:[
+    {from:'Li Wei',text:'UK-INV-2026-000088 for CellParts Direct (\u00A38,940) is now 11 days overdue. This is their first late payment. Should we send a formal reminder or call Alan directly?',time:'5:00 AM',sent:false},
+    {from:'You',text:'Let me call Alan first. They have been reliable until now, might just be an oversight.',time:'5:15 AM',sent:true},
+   ]},
+  {id:6,channel:'email',sender:'Marco Rossi',senderRole:'Mobile Hospital Rome',company:'Mobile Hospital Rome',subject:'Delivery ETA for camera modules',preview:'When can we expect the camera modules we ordered...',time:'Yesterday',unread:false,
+   messages:[
+    {from:'Marco Rossi',text:'Good afternoon,\n\nCould you please confirm the delivery date for our camera module order? We have customers waiting.\n\nThank you,\nMarco',time:'Yesterday 3:00 PM',sent:false},
+    {from:'You',text:'Hi Marco, your order shipped via PostNL yesterday. Tracking: 3SPOST7654321. Expected delivery is Thursday.\n\nBest,\nEmma',time:'Yesterday 4:30 PM',sent:true},
+   ]},
+  {id:7,channel:'internal',sender:'James Wilson',senderRole:'Sales Manager',company:'Internal',subject:'New lead from trade show',preview:'Met a great prospect at the Amsterdam trade show...',time:'Yesterday',unread:false,
+   messages:[
+    {from:'James Wilson',text:'Met RepairTech GmbH at the Amsterdam trade show. They are doing 500+ repairs per month and currently sourcing from a competitor. Hans Mueller (their purchasing lead) is very interested. Moving to negotiation stage.',time:'Yesterday 11:00 AM',sent:false},
+    {from:'You',text:'Excellent! I have updated the CRM. Let me know when you want to send samples.',time:'Yesterday 11:30 AM',sent:true},
+   ]},
+  {id:8,channel:'whatsapp',sender:'Erik Lindqvist',senderRole:'FixIt Pro Sweden',company:'FixIt Pro Sweden',subject:'Sample request',preview:'Thanks for the demo! Can we get samples of the screens?',time:'2 days ago',unread:false,
+   messages:[
+    {from:'Erik Lindqvist',text:'Thanks for the demo yesterday! Can we get 2 sample screens to test quality before placing a bulk order?',time:'2 days ago 2:00 PM',sent:false},
+    {from:'You',text:'Of course! I will ship 2x iPhone 15 Pro Max OEM screens to your Stockholm address. Should arrive within 3-4 days via DHL.',time:'2 days ago 2:30 PM',sent:true},
+    {from:'Erik Lindqvist',text:'Perfect, looking forward to testing them!',time:'2 days ago 2:35 PM',sent:false},
+   ]},
+];
+
+const ACTIVITY_FEED = [
+  {icon:'\u{1F4E6}',bg:'var(--blue-100)',text:'New order ORD-2026-000147 from TechFix London (\u00A32,845)',time:'5 min ago'},
+  {icon:'\u{1F4B3}',bg:'var(--green-100)',text:'Payment received: \u00A589,400 from Shenzhen iRepair',time:'1 hour ago'},
+  {icon:'\u{1F69A}',bg:'var(--purple-100)',text:'Shipment SHP-28451 picked up by SF Express',time:'2 hours ago'},
+  {icon:'\u{1F504}',bg:'var(--orange-100)',text:'RMA-2026-0033 received at AMS-HUB warehouse',time:'3 hours ago'},
+  {icon:'\u{1F465}',bg:'var(--blue-100)',text:'Lead RepairTech GmbH moved to Negotiation stage',time:'5 hours ago'},
+  {icon:'\u{1F4C4}',bg:'var(--purple-100)',text:'Invoice NL-INV-2026-000156 sent to MobilePartsNL',time:'6 hours ago'},
+  {icon:'\u26A0\uFE0F',bg:'var(--red-100)',text:'SLA warning: RMA-2026-0034 at 75% threshold',time:'7 hours ago'},
+  {icon:'\u{1F4E6}',bg:'var(--blue-100)',text:'Order ORD-2026-000145 dispatched from SZ-MAIN',time:'Yesterday'},
+];
+
+const REVENUE_DATA = [
+  {month:'Oct',value:142000},{month:'Nov',value:168000},{month:'Dec',value:195000},
+  {month:'Jan',value:178000},{month:'Feb',value:210000},{month:'Mar',value:248000},
+];
+
+const statusBadge = (s) => {
+  const map = {CONFIRMED:'badge-blue',PROCESSING:'badge-orange',DISPATCHED:'badge-purple',DELIVERED:'badge-green',CLOSED:'badge-gray',ALLOCATED:'badge-blue',DRAFT:'badge-gray',ON_HOLD:'badge-red',
+    ISSUED:'badge-blue',SENT:'badge-purple',PAID:'badge-green',PARTIALLY_PAID:'badge-orange',OVERDUE:'badge-red',CANCELLED:'badge-gray',CREDIT_NOTE:'badge-gray',
+    INSPECTED:'badge-purple',RECEIVED:'badge-blue',IN_TRANSIT:'badge-orange',REQUEST_RAISED:'badge-blue',APPROVED:'badge-green',RESOLUTION:'badge-orange',
+    PROSPECT:'badge-gray',CONTACTED:'badge-blue',QUALIFIED:'badge-orange',DEMO_SAMPLE:'badge-purple',NEGOTIATION:'badge-green',CUSTOMER:'badge-green',CHURNED:'badge-red',
+    PENDING:'badge-gray',LABEL_CREATED:'badge-blue',OUT_FOR_DELIVERY:'badge-purple',FAILED_DELIVERY:'badge-red',GRADED:'badge-green',
+    HIGH:'badge-red',MEDIUM:'badge-orange',LOW:'badge-blue',URGENT:'badge-red',
+  };
+  return map[s]||'badge-gray';
+};
+
+const fmt = (s) => s.replace(/_/g,' ');
+
+// ─── i18n Translations ─────────────────────────────────────
+const TRANSLATIONS = {
+  en: {
+    operations:'Operations',finance:'Finance',customer:'Customer',system:'System',
+    dashboard:'Dashboard',orders:'Orders',products:'Products',shipments:'Shipments',
+    invoices:'Invoices',payments:'Payments',rma:'Returns (RMA)',buyback:'Buyback',
+    crm:'CRM & Leads',comms:'Communications',reports:'Reports',settings:'Settings',
+    'title.dashboard':'Dashboard','title.orders':'Order Management',
+    'title.products':'Product Catalogue','title.invoices':'Invoicing & Finance',
+    'title.payments':'Payments','title.rma':'Returns (RMA)','title.buyback':'Buyback Programme',
+    'title.crm':'CRM & Leads','title.comms':'Communications Hub',
+    'title.shipments':'Shipments & Tracking','title.reports':'Reports & Analytics',
+    'title.automation':'Workflow Automation','title.settings':'Admin Settings',
+    subtitle:'Parts Operations Platform',search:'Search orders, products, companies...',
+    viewAll:'View All',newOrder:'+ New Order',newInvoice:'+ New Invoice',
+    exportCsv:'Export CSV',allOrders:'All Orders',
+    revenueMtd:'Revenue (MTD)',activeOrders:'Active Orders',openRmas:'Open RMAs',
+    pendingInvoices:'Pending Invoices',revenueTrend:'Revenue Trend (6 months)',
+    gbpEquiv:'GBP equivalent',warehouseStock:'Warehouse Stock',recentOrders:'Recent Orders',
+    units:'units',vsLastMonth:'vs last month',newToday:'new today',overdueSla:'overdue SLA',overdue:'overdue',
+    order:'Order',company:'Company',items:'Items',total:'Total',status:'Status',
+    date:'Date',warehouse:'Warehouse',sku:'SKU',product:'Product',grade:'Grade',
+    price:'Price',sz:'SZ',ams:'AMS',invoice:'Invoice #',entity:'Entity',
+    amount:'Amount',paid:'Paid',due:'Due',
+    email:'Email',password:'Password',signIn:'Sign In',demoNote:'Demo: any password works',
+    loginSubtitle:'Enterprise B2B Parts Ordering & Operations Platform',
+    revenueYtd:'Revenue YTD',outstanding:'Outstanding',collectionRate:'Collection Rate',
+    avgResolution:'Avg Resolution',slaCompliance:'SLA Compliance',thisMonth:'This Month',
+    returnRequests:'Return Requests',newRma:'+ New RMA',reason:'Reason',sla:'SLA',
+    totalLeads:'Total Leads',pipelineValue:'Pipeline Value',conversionRate:'Conversion Rate',
+    avgDealSize:'Avg Deal Size',leadPipeline:'Lead Pipeline',addLead:'+ Add Lead',
+    contact:'Contact',stage:'Stage',value:'Value',score:'Score',lastContact:'Last Contact',
+    inTransit:'In Transit',deliveredToday:'Delivered Today',avgTransitTime:'Avg Transit Time',
+    deliveryRate:'Delivery Rate',createShipment:'+ Create Shipment',
+    shipment:'Shipment',carrier:'Carrier',tracking:'Tracking',route:'Route',eta:'ETA',
+    revenue:'Revenue',inventory:'Inventory',customers:'Customers',
+    growth:'Growth',avgOrderValue:'Avg Order Value',monthlyRevenue:'Monthly Revenue',
+    revenueByEntity:'Revenue by Entity',share:'Share',
+    users:'Users',config:'Config',tax:'Tax Rates',exchange:'Exchange Rates',
+    carriers:'Carriers',webhooks:'Webhooks',audit:'Audit',
+    staffUsers:'Staff Users',inviteUser:'+ Invite User',name:'Name',role:'Role',actions:'Actions',
+    paymentsToday:'Payments Today',stripeBalance:'Stripe Balance',
+    pendingPayouts:'Pending Payouts',refundsMtd:'Refunds (MTD)',recentPayments:'Recent Payments',
+    reference:'Reference',method:'Method',
+    activeBuybacks:'Active Buybacks',devicesReceived:'Devices Received',totalValue:'Total Value',
+    avgGrade:'Avg Grade',buybackRequests:'Buyback Requests',newBuyback:'+ New Buyback',
+    device:'Device',qty:'Qty',
+    openTickets:'Open Tickets',avgResponse:'Avg Response',channel:'Channel',subject:'Subject',
+    priority:'Priority',updated:'Updated',activeConversations:'Active Conversations',
+    days:'days',notifications:'Notifications',markAllRead:'Mark all read',orderDetails:'Order Details',
+    orderTimeline:'Order Timeline',lineItems:'Line Items',kanbanView:'Kanban View',tableView:'Table View',
+    create:'Create',cancel:'Cancel',submit:'Submit',save:'Save',
+    newOrderTitle:'Create New Order',newProductTitle:'Add New Product',newShipmentTitle:'Create Shipment',
+    newInvoiceTitle:'Create New Invoice',newRmaTitle:'New Return Request',newBuybackTitle:'New Buyback Request',
+    newLeadTitle:'Add New Lead',inviteUserTitle:'Invite User',
+    selectCompany:'Select company...',selectWarehouse:'Select warehouse...',selectCarrier:'Select carrier...',
+    selectEntity:'Select entity...',selectDevice:'Select device...',selectRole:'Select role...',
+    description:'Description',phone:'Phone',website:'Website',notes:'Notes',
+    created:'created successfully',invited:'invited successfully',
+    automation:'Automation',grossMargin:'Gross Margin',orderFillRate:'Order Fill Rate',avgDispatchTime:'Avg Dispatch Time',
+    revenueChart:'Revenue Chart',smartAlerts:'Smart Alerts',demandForecast:'Demand Forecast',
+    currentStock:'Current Stock',topCustomers:'Top Customers',marginAnalysis:'Margin Analysis',
+    category:'Category',activeWorkflows:'Active Workflows',recentAutomations:'Recent Automations',automationRules:'Automation Rules',
+    action:'Action',
+  },
+  nl: {
+    operations:'Operaties',finance:'Financi\u00EBn',customer:'Klant',system:'Systeem',
+    dashboard:'Dashboard',orders:'Bestellingen',products:'Producten',shipments:'Zendingen',
+    invoices:'Facturen',payments:'Betalingen',rma:'Retouren (RMA)',buyback:'Inkoop',
+    crm:'CRM & Leads',comms:'Communicatie',reports:'Rapporten',settings:'Instellingen',
+    'title.dashboard':'Dashboard','title.orders':'Orderbeheer',
+    'title.products':'Productcatalogus','title.invoices':'Facturatie & Financi\u00EBn',
+    'title.payments':'Betalingen','title.rma':'Retouren (RMA)','title.buyback':'Inkoopprogramma',
+    'title.crm':'CRM & Leads','title.comms':'Communicatiehub',
+    'title.shipments':'Zendingen & Tracking','title.reports':'Rapporten & Analyses',
+    'title.settings':'Beheerdersinstellingen',
+    subtitle:'Onderdelen Operatieplatform',search:'Zoek bestellingen, producten, bedrijven...',
+    viewAll:'Alles Bekijken',newOrder:'+ Nieuwe Bestelling',newInvoice:'+ Nieuwe Factuur',
+    exportCsv:'CSV Exporteren',allOrders:'Alle Bestellingen',
+    revenueMtd:'Omzet (MTD)',activeOrders:'Actieve Bestellingen',openRmas:'Open RMA\'s',
+    pendingInvoices:'Openstaande Facturen',revenueTrend:'Omzettrend (6 maanden)',
+    gbpEquiv:'GBP equivalent',warehouseStock:'Magazijnvoorraad',recentOrders:'Recente Bestellingen',
+    units:'eenheden',vsLastMonth:'vs vorige maand',newToday:'nieuw vandaag',overdueSla:'te laat SLA',overdue:'achterstallig',
+    order:'Bestelling',company:'Bedrijf',items:'Artikelen',total:'Totaal',status:'Status',
+    date:'Datum',warehouse:'Magazijn',sku:'SKU',product:'Product',grade:'Kwaliteit',
+    price:'Prijs',sz:'SZ',ams:'AMS',invoice:'Factuur #',entity:'Entiteit',
+    amount:'Bedrag',paid:'Betaald',due:'Vervaldatum',
+    email:'E-mail',password:'Wachtwoord',signIn:'Inloggen',demoNote:'Demo: elk wachtwoord werkt',
+    loginSubtitle:'Enterprise B2B Onderdelen Bestel- & Operatieplatform',
+    revenueYtd:'Omzet JTD',outstanding:'Openstaand',collectionRate:'Incassopercentage',
+    avgResolution:'Gem. Oplossing',slaCompliance:'SLA Naleving',thisMonth:'Deze Maand',
+    returnRequests:'Retourverzoeken',newRma:'+ Nieuw RMA',reason:'Reden',sla:'SLA',
+    totalLeads:'Totaal Leads',pipelineValue:'Pijplijnwaarde',conversionRate:'Conversieratio',
+    avgDealSize:'Gem. Dealgrootte',leadPipeline:'Lead Pijplijn',addLead:'+ Lead Toevoegen',
+    contact:'Contact',stage:'Fase',value:'Waarde',score:'Score',lastContact:'Laatst Contact',
+    inTransit:'Onderweg',deliveredToday:'Vandaag Bezorgd',avgTransitTime:'Gem. Transittijd',
+    deliveryRate:'Leveringspercentage',createShipment:'+ Zending Aanmaken',
+    shipment:'Zending',carrier:'Vervoerder',tracking:'Tracking',route:'Route',eta:'ETA',
+    revenue:'Omzet',inventory:'Voorraad',customers:'Klanten',
+    growth:'Groei',avgOrderValue:'Gem. Orderwaarde',monthlyRevenue:'Maandelijkse Omzet',
+    revenueByEntity:'Omzet per Entiteit',share:'Aandeel',
+    users:'Gebruikers',config:'Configuratie',tax:'Belastingtarieven',exchange:'Wisselkoersen',
+    carriers:'Vervoerders',webhooks:'Webhooks',audit:'Audit',
+    staffUsers:'Medewerkers',inviteUser:'+ Gebruiker Uitnodigen',name:'Naam',role:'Rol',actions:'Acties',
+    paymentsToday:'Betalingen Vandaag',stripeBalance:'Stripe Saldo',
+    pendingPayouts:'Uitstaande Uitbetalingen',refundsMtd:'Terugbetalingen (MTD)',recentPayments:'Recente Betalingen',
+    reference:'Referentie',method:'Methode',
+    activeBuybacks:'Actieve Inkopen',devicesReceived:'Apparaten Ontvangen',totalValue:'Totale Waarde',
+    avgGrade:'Gem. Kwaliteit',buybackRequests:'Inkoopverzoeken',newBuyback:'+ Nieuw Inkoop',
+    device:'Apparaat',qty:'Aantal',
+    openTickets:'Open Tickets',avgResponse:'Gem. Respons',channel:'Kanaal',subject:'Onderwerp',
+    priority:'Prioriteit',updated:'Bijgewerkt',activeConversations:'Actieve Gesprekken',
+    days:'dagen',notifications:'Meldingen',markAllRead:'Alles gelezen',orderDetails:'Bestelgegevens',
+    orderTimeline:'Besteltijdlijn',lineItems:'Regelartikelen',kanbanView:'Kanban Weergave',tableView:'Tabel Weergave',
+    create:'Aanmaken',cancel:'Annuleren',submit:'Verzenden',save:'Opslaan',
+    newOrderTitle:'Nieuwe Bestelling',newProductTitle:'Nieuw Product',newShipmentTitle:'Nieuwe Zending',
+    newInvoiceTitle:'Nieuwe Factuur',newRmaTitle:'Nieuw Retourverzoek',newBuybackTitle:'Nieuw Inkoopverzoek',
+    newLeadTitle:'Nieuwe Lead',inviteUserTitle:'Gebruiker Uitnodigen',
+    selectCompany:'Selecteer bedrijf...',selectWarehouse:'Selecteer magazijn...',selectCarrier:'Selecteer vervoerder...',
+    selectEntity:'Selecteer entiteit...',selectDevice:'Selecteer apparaat...',selectRole:'Selecteer rol...',
+    description:'Beschrijving',phone:'Telefoon',website:'Website',notes:'Notities',
+    created:'succesvol aangemaakt',invited:'succesvol uitgenodigd',
+    automation:'Automatisering',grossMargin:'Brutomarge',orderFillRate:'Orderafhandelingspercentage',avgDispatchTime:'Gem. Verzendtijd',
+    revenueChart:'Omzetgrafiek',smartAlerts:'Slimme Waarschuwingen',demandForecast:'Vraagprognose',
+    currentStock:'Huidige Voorraad',topCustomers:'Top Klanten',marginAnalysis:'Margeanalyse',
+    category:'Categorie',activeWorkflows:'Actieve Workflows',recentAutomations:'Recente Automatiseringen',automationRules:'Automatiseringsregels',
+    action:'Actie',
+  },
+  zh: {
+    operations:'\u8FD0\u8425',finance:'\u8D22\u52A1',customer:'\u5BA2\u6237',system:'\u7CFB\u7EDF',
+    dashboard:'\u4EEA\u8868\u76D8',orders:'\u8BA2\u5355',products:'\u4EA7\u54C1',shipments:'\u7269\u6D41',
+    invoices:'\u53D1\u7968',payments:'\u4ED8\u6B3E',rma:'\u9000\u8D27 (RMA)',buyback:'\u56DE\u8D2D',
+    crm:'CRM & \u7EBF\u7D22',comms:'\u901A\u8BAF',reports:'\u62A5\u8868',settings:'\u8BBE\u7F6E',
+    'title.dashboard':'\u4EEA\u8868\u76D8','title.orders':'\u8BA2\u5355\u7BA1\u7406',
+    'title.products':'\u4EA7\u54C1\u76EE\u5F55','title.invoices':'\u53D1\u7968\u4E0E\u8D22\u52A1',
+    'title.payments':'\u4ED8\u6B3E\u7BA1\u7406','title.rma':'\u9000\u8D27 (RMA)','title.buyback':'\u56DE\u8D2D\u8BA1\u5212',
+    'title.crm':'CRM & \u7EBF\u7D22\u7BA1\u7406','title.comms':'\u901A\u8BAF\u4E2D\u5FC3',
+    'title.shipments':'\u7269\u6D41\u4E0E\u8DDF\u8E2A','title.reports':'\u62A5\u8868\u4E0E\u5206\u6790',
+    'title.settings':'\u7CFB\u7EDF\u8BBE\u7F6E',
+    subtitle:'\u96F6\u4EF6\u8FD0\u8425\u5E73\u53F0',search:'\u641C\u7D22\u8BA2\u5355\u3001\u4EA7\u54C1\u3001\u516C\u53F8...',
+    viewAll:'\u67E5\u770B\u5168\u90E8',newOrder:'+ \u65B0\u5EFA\u8BA2\u5355',newInvoice:'+ \u65B0\u5EFA\u53D1\u7968',
+    exportCsv:'\u5BFC\u51FACSV',allOrders:'\u5168\u90E8\u8BA2\u5355',
+    revenueMtd:'\u6536\u5165 (\u672C\u6708)',activeOrders:'\u6D3B\u8DC3\u8BA2\u5355',openRmas:'\u5F85\u5904\u7406\u9000\u8D27',
+    pendingInvoices:'\u672A\u7ED3\u53D1\u7968',revenueTrend:'\u6536\u5165\u8D8B\u52BF (6\u4E2A\u6708)',
+    gbpEquiv:'\u82F1\u9551\u7B49\u503C',warehouseStock:'\u4ED3\u5E93\u5E93\u5B58',recentOrders:'\u6700\u8FD1\u8BA2\u5355',
+    units:'\u4EF6',vsLastMonth:'\u5BF9\u6BD4\u4E0A\u6708',newToday:'\u4ECA\u65E5\u65B0\u589E',overdueSla:'\u8D85\u671FSLA',overdue:'\u903E\u671F',
+    order:'\u8BA2\u5355',company:'\u516C\u53F8',items:'\u5546\u54C1',total:'\u5408\u8BA1',status:'\u72B6\u6001',
+    date:'\u65E5\u671F',warehouse:'\u4ED3\u5E93',sku:'SKU',product:'\u4EA7\u54C1',grade:'\u7B49\u7EA7',
+    price:'\u4EF7\u683C',sz:'\u6DF1\u5733',ams:'\u963F\u59C6',invoice:'\u53D1\u7968\u53F7',entity:'\u5B9E\u4F53',
+    amount:'\u91D1\u989D',paid:'\u5DF2\u4ED8',due:'\u5230\u671F\u65E5',
+    email:'\u90AE\u7BB1',password:'\u5BC6\u7801',signIn:'\u767B\u5F55',demoNote:'\u6F14\u793A\uFF1A\u4EFB\u610F\u5BC6\u7801\u5373\u53EF',
+    loginSubtitle:'\u4F01\u4E1AB2B\u96F6\u914D\u4EF6\u8BA2\u8D2D\u4E0E\u8FD0\u8425\u5E73\u53F0',
+    revenueYtd:'\u5E74\u5EA6\u6536\u5165',outstanding:'\u672A\u6536\u6B3E',collectionRate:'\u56DE\u6536\u7387',
+    avgResolution:'\u5E73\u5747\u5904\u7406\u65F6\u95F4',slaCompliance:'SLA\u8FBE\u6807\u7387',thisMonth:'\u672C\u6708',
+    returnRequests:'\u9000\u8D27\u7533\u8BF7',newRma:'+ \u65B0\u5EFA\u9000\u8D27',reason:'\u539F\u56E0',sla:'SLA',
+    totalLeads:'\u7EBF\u7D22\u603B\u6570',pipelineValue:'\u7BA1\u7EBF\u4EF7\u503C',conversionRate:'\u8F6C\u5316\u7387',
+    avgDealSize:'\u5E73\u5747\u4EA4\u6613\u989D',leadPipeline:'\u7EBF\u7D22\u7BA1\u7EBF',addLead:'+ \u6DFB\u52A0\u7EBF\u7D22',
+    contact:'\u8054\u7CFB\u4EBA',stage:'\u9636\u6BB5',value:'\u4EF7\u503C',score:'\u8BC4\u5206',lastContact:'\u6700\u8FD1\u8054\u7CFB',
+    inTransit:'\u8FD0\u8F93\u4E2D',deliveredToday:'\u4ECA\u65E5\u9001\u8FBE',avgTransitTime:'\u5E73\u5747\u8FD0\u8F93\u65F6\u95F4',
+    deliveryRate:'\u9001\u8FBE\u7387',createShipment:'+ \u521B\u5EFA\u7269\u6D41',
+    shipment:'\u7269\u6D41\u5355',carrier:'\u627F\u8FD0\u5546',tracking:'\u8DDF\u8E2A\u53F7',route:'\u8DEF\u7EBF',eta:'\u9884\u8BA1\u5230\u8FBE',
+    revenue:'\u6536\u5165',inventory:'\u5E93\u5B58',customers:'\u5BA2\u6237',
+    growth:'\u589E\u957F',avgOrderValue:'\u5E73\u5747\u8BA2\u5355\u989D',monthlyRevenue:'\u6708\u5EA6\u6536\u5165',
+    revenueByEntity:'\u5404\u5B9E\u4F53\u6536\u5165',share:'\u5360\u6BD4',
+    users:'\u7528\u6237',config:'\u914D\u7F6E',tax:'\u7A0E\u7387',exchange:'\u6C47\u7387',
+    carriers:'\u627F\u8FD0\u5546',webhooks:'Webhooks',audit:'\u5BA1\u8BA1',
+    staffUsers:'\u5458\u5DE5\u7528\u6237',inviteUser:'+ \u9080\u8BF7\u7528\u6237',name:'\u59D3\u540D',role:'\u89D2\u8272',actions:'\u64CD\u4F5C',
+    paymentsToday:'\u4ECA\u65E5\u6536\u6B3E',stripeBalance:'Stripe\u4F59\u989D',
+    pendingPayouts:'\u5F85\u4ED8\u6B3E',refundsMtd:'\u9000\u6B3E (\u672C\u6708)',recentPayments:'\u6700\u8FD1\u4ED8\u6B3E',
+    reference:'\u53C2\u8003\u53F7',method:'\u65B9\u5F0F',
+    activeBuybacks:'\u6D3B\u8DC3\u56DE\u8D2D',devicesReceived:'\u5DF2\u6536\u8BBE\u5907',totalValue:'\u603B\u4EF7\u503C',
+    avgGrade:'\u5E73\u5747\u7B49\u7EA7',buybackRequests:'\u56DE\u8D2D\u7533\u8BF7',newBuyback:'+ \u65B0\u5EFA\u56DE\u8D2D',
+    device:'\u8BBE\u5907',qty:'\u6570\u91CF',
+    openTickets:'\u5F85\u5904\u7406\u5DE5\u5355',avgResponse:'\u5E73\u5747\u54CD\u5E94',channel:'\u6E20\u9053',subject:'\u4E3B\u9898',
+    priority:'\u4F18\u5148\u7EA7',updated:'\u66F4\u65B0\u65F6\u95F4',activeConversations:'\u6D3B\u8DC3\u5BF9\u8BDD',
+    days:'\u5929',notifications:'\u901A\u77E5',markAllRead:'\u5168\u90E8\u5DF2\u8BFB',orderDetails:'\u8BA2\u5355\u8BE6\u60C5',
+    orderTimeline:'\u8BA2\u5355\u65F6\u95F4\u7EBF',lineItems:'\u8BA2\u5355\u660E\u7EC6',kanbanView:'\u770B\u677F\u89C6\u56FE',tableView:'\u8868\u683C\u89C6\u56FE',
+    create:'\u521B\u5EFA',cancel:'\u53D6\u6D88',submit:'\u63D0\u4EA4',save:'\u4FDD\u5B58',
+    newOrderTitle:'\u65B0\u5EFA\u8BA2\u5355',newProductTitle:'\u6DFB\u52A0\u4EA7\u54C1',newShipmentTitle:'\u521B\u5EFA\u7269\u6D41',
+    newInvoiceTitle:'\u65B0\u5EFA\u53D1\u7968',newRmaTitle:'\u65B0\u5EFA\u9000\u8D27\u7533\u8BF7',newBuybackTitle:'\u65B0\u5EFA\u56DE\u8D2D\u7533\u8BF7',
+    newLeadTitle:'\u6DFB\u52A0\u7EBF\u7D22',inviteUserTitle:'\u9080\u8BF7\u7528\u6237',
+    selectCompany:'\u9009\u62E9\u516C\u53F8...',selectWarehouse:'\u9009\u62E9\u4ED3\u5E93...',selectCarrier:'\u9009\u62E9\u627F\u8FD0\u5546...',
+    selectEntity:'\u9009\u62E9\u5B9E\u4F53...',selectDevice:'\u9009\u62E9\u8BBE\u5907...',selectRole:'\u9009\u62E9\u89D2\u8272...',
+    description:'\u63CF\u8FF0',phone:'\u7535\u8BDD',website:'\u7F51\u7AD9',notes:'\u5907\u6CE8',
+    created:'\u521B\u5EFA\u6210\u529F',invited:'\u9080\u8BF7\u6210\u529F',
+    'title.automation':'\u5DE5\u4F5C\u6D41\u81EA\u52A8\u5316',
+    automation:'\u81EA\u52A8\u5316',grossMargin:'\u6BDB\u5229\u7387',orderFillRate:'\u8BA2\u5355\u5904\u7406\u7387',avgDispatchTime:'\u5E73\u5747\u6D3B\u52A8\u65F6\u95F4',
+    revenueChart:'\u6536\u5165\u56FE\u8868',smartAlerts:'\u667A\u80FD\u8B66\u62A5',demandForecast:'\u9700\u6C42\u9884\u6D4B',
+    currentStock:'\u5F53\u524D\u5E93\u5B58',topCustomers:'\u9876\u7EA7\u5BA2\u6237',marginAnalysis:'\u4E8B\u4E1A\u4F59\u989D\u5206\u6790',
+    category:'\u7C7B\u522B',activeWorkflows:'\u6D3B\u8DC3\u5DE5\u4F5C\u6D41',recentAutomations:'\u6700\u8FD1\u81EA\u52A8\u5316',automationRules:'\u81EA\u52A8\u5316\u89C4\u5219',
+    action:'\u64CD\u4F5C',
+  }
+};
+
+function useT(lang) {
+  return (key) => TRANSLATIONS[lang]?.[key] || TRANSLATIONS.en[key] || key;
+}
+
+// ─── Components ─────────────────────────────────────────────
+function Toast({message,onClose}){
+  useEffect(()=>{const t=setTimeout(onClose,3000);return()=>clearTimeout(t)},[]);
+  return React.createElement('div',{className:'toast'},'\u2705 ',message);
+}
+
+function SearchField({value,options,placeholder,onChange}){
+  const [query,setQuery]=useState(value||'');
+  const [open,setOpen]=useState(false);
+  const filtered=options.filter(o=>o.toLowerCase().includes(query.toLowerCase()));
+  const ref=React.useRef(null);
+  useEffect(()=>{
+    const handler=e=>{if(ref.current&&!ref.current.contains(e.target))setOpen(false);};
+    document.addEventListener('mousedown',handler);return()=>document.removeEventListener('mousedown',handler);
+  },[]);
+  return React.createElement('div',{className:'search-autocomplete',ref},
+    React.createElement('input',{value:query,placeholder,onChange:e=>{setQuery(e.target.value);setOpen(true);onChange(e.target.value);},onFocus:()=>setOpen(true)}),
+    open&&query.length>0&&filtered.length>0&&React.createElement('div',{className:'sa-dropdown'},
+      filtered.map(o=>React.createElement('div',{key:o,className:'sa-option',onClick:()=>{setQuery(o);onChange(o);setOpen(false);}},o))
+    )
+  );
+}
+
+function CreateFormModal({title,fields,onSubmit,onClose,lang}){
+  const t=useT(lang);
+  const [values,setValues]=useState(()=>{const v={};fields.forEach(f=>{v[f.key]=f.default||''});return v;});
+  const set=(k,val)=>setValues(prev=>({...prev,[k]:val}));
+  return React.createElement('div',{className:'modal-overlay',onClick:e=>{if(e.target===e.currentTarget)onClose()}},
+    React.createElement('div',{className:'modal'},
+      React.createElement('h3',null,title,React.createElement('button',{className:'modal-close',onClick:onClose},'\u2715')),
+      React.createElement('div',{style:{display:'flex',flexDirection:'column',gap:16}},
+        fields.map(f=>React.createElement('div',{key:f.key,className:'form-group',style:{marginBottom:0}},
+          React.createElement('label',null,f.label),
+          f.type==='search'?
+            React.createElement(SearchField,{value:values[f.key],options:f.options||[],placeholder:f.placeholder||'Type to search...',onChange:v=>set(f.key,v)}):
+          f.type==='select'?
+            React.createElement('select',{className:'lang-select',style:{width:'100%',padding:'10px 14px',borderRadius:8,border:'1px solid var(--border-color)',fontSize:'.95rem'},value:values[f.key],onChange:e=>set(f.key,e.target.value)},
+              React.createElement('option',{value:''},f.placeholder||'Select...'),
+              (f.options||[]).map(o=>React.createElement('option',{key:o,value:o},o))
+            ):
+          f.type==='textarea'?
+            React.createElement('textarea',{style:{width:'100%',padding:'10px 14px',border:'1px solid var(--border-color)',borderRadius:8,fontSize:'.95rem',minHeight:80,resize:'vertical',fontFamily:'inherit',background:'var(--bg-card)',color:'var(--text-primary)'},value:values[f.key],onChange:e=>set(f.key,e.target.value),placeholder:f.placeholder||''}):
+            React.createElement('input',{type:f.type||'text',style:{width:'100%',padding:'10px 14px',border:'1px solid var(--border-color)',borderRadius:8,fontSize:'.95rem',background:'var(--bg-card)',color:'var(--text-primary)'},value:values[f.key],onChange:e=>set(f.key,e.target.value),placeholder:f.placeholder||''})
+        ))
+      ),
+      React.createElement('div',{className:'actions-row',style:{marginTop:24}},
+        React.createElement('button',{className:'btn btn-outline btn-sm',onClick:onClose},t('cancel')),
+        React.createElement('button',{className:'btn btn-primary btn-sm',style:{width:'auto'},onClick:()=>onSubmit(values)},t('create'))
+      )
+    )
+  );
+}
+
+// Form field configs for each create modal
+const FORM_CONFIGS = {
+  order:(t)=>[
+    {key:'company',label:t('company'),type:'select',type:'search',options:['TechFix London','MobilePartsNL','Shenzhen iRepair','PhoneDoc Berlin','CellParts Direct','Smart Repair Paris'],placeholder:'Type to search companies...'},
+    {key:'warehouse',label:t('warehouse'),type:'select',options:['SZ-MAIN','AMS-HUB','UK-FWD'],placeholder:t('selectWarehouse')},
+    {key:'product',label:t('product'),type:'select',options:['iPhone 15 Pro Max Screen','iPhone 15 Pro Screen','iPhone 14 Pro Max Screen','iPhone 15 Pro Max Battery','iPhone 15 USB-C Port'],placeholder:'Select product...'},
+    {key:'qty',label:t('qty'),type:'number',placeholder:'1'},
+    {key:'notes',label:t('notes'),type:'textarea',placeholder:'Order notes...'},
+  ],
+  product:(t)=>[
+    {key:'sku',label:t('sku'),placeholder:'APL-XXX-XXXX'},
+    {key:'name',label:t('product'),placeholder:'Product name'},
+    {key:'category',label:'Category',type:'select',options:['Screens','Batteries','Cameras','Charging','Housing','Connectors']},
+    {key:'grade',label:t('grade'),type:'select',options:['OEM','Premium AM','Standard AM']},
+    {key:'price',label:t('price'),placeholder:'\u00A30.00'},
+    {key:'stock',label:'Initial Stock (SZ)',type:'number',placeholder:'0'},
+  ],
+  shipment:(t)=>[
+    {key:'order',label:t('order'),type:'select',options:['ORD-2026-000147','ORD-2026-000146','ORD-2026-000145','ORD-2026-000143','ORD-2026-000142'],placeholder:'Select order...'},
+    {key:'carrier',label:t('carrier'),type:'select',options:['DHL Express','PostNL','SF Express','FedEx','UPS','Royal Mail'],placeholder:t('selectCarrier')},
+    {key:'tracking',label:t('tracking'),placeholder:'Tracking number'},
+    {key:'warehouse',label:t('warehouse'),type:'select',options:['SZ-MAIN','AMS-HUB','UK-FWD'],placeholder:t('selectWarehouse')},
+  ],
+  invoice:(t)=>[
+    {key:'company',label:t('company'),type:'select',options:['TechFix London','MobilePartsNL','Shenzhen iRepair','PhoneDoc Berlin','CellParts Direct','Smart Repair Paris'],placeholder:t('selectCompany')},
+    {key:'entity',label:t('entity'),type:'select',options:['UK','NL','CN'],placeholder:t('selectEntity')},
+    {key:'amount',label:t('amount'),placeholder:'\u00A30.00'},
+    {key:'due',label:t('due'),type:'date'},
+    {key:'notes',label:t('notes'),type:'textarea',placeholder:'Invoice notes...'},
+  ],
+  rma:(t)=>[
+    {key:'order',label:t('order'),type:'select',options:['ORD-2026-000147','ORD-2026-000146','ORD-2026-000145','ORD-2026-000144','ORD-2026-000143'],placeholder:'Select order...'},
+    {key:'company',label:t('company'),type:'select',options:['TechFix London','MobilePartsNL','Shenzhen iRepair','PhoneDoc Berlin','CellParts Direct'],placeholder:t('selectCompany')},
+    {key:'reason',label:t('reason'),type:'select',options:['Faulty Product','Wrong Item','Warranty Claim','Damaged in Transit','Quality Issue']},
+    {key:'items',label:t('items'),type:'number',placeholder:'1'},
+    {key:'notes',label:t('notes'),type:'textarea',placeholder:'Describe the issue...'},
+  ],
+  buyback:(t)=>[
+    {key:'device',label:t('device'),type:'select',options:['iPhone 15 Pro Max','iPhone 15 Pro','iPhone 14 Pro Max','iPhone 14 Pro','iPhone 13 Pro','Samsung S24 Ultra','Samsung S23 Ultra'],placeholder:t('selectDevice')},
+    {key:'company',label:t('company'),type:'select',options:['TechFix London','MobilePartsNL','PhoneDoc Berlin','CellParts Direct'],placeholder:t('selectCompany')},
+    {key:'qty',label:t('qty'),type:'number',placeholder:'1'},
+    {key:'grade',label:t('grade'),type:'select',options:['A','B','C','D']},
+    {key:'notes',label:t('notes'),type:'textarea',placeholder:'Condition notes...'},
+  ],
+  lead:(t)=>[
+    {key:'company',label:t('company'),placeholder:'Company name'},
+    {key:'contact',label:t('contact'),placeholder:'Contact name'},
+    {key:'email',label:t('email'),type:'email',placeholder:'email@company.com'},
+    {key:'phone',label:t('phone'),placeholder:'+44 ...'},
+    {key:'value',label:t('value'),placeholder:'\u20AC0'},
+    {key:'notes',label:t('notes'),type:'textarea',placeholder:'Lead notes...'},
+  ],
+  payment:(t)=>[
+    {key:'invoice',label:t('invoice'),type:'select',options:['UK-INV-2026-000089','NL-INV-2026-000156','NL-INV-2026-000155','UK-INV-2026-000088'],placeholder:'Select unpaid invoice...'},
+    {key:'amount',label:t('amount'),placeholder:'\u00A30.00'},
+    {key:'method',label:t('method'),type:'select',options:['Bank Transfer','Stripe','Cash','Cheque']},
+    {key:'reference',label:t('reference'),placeholder:'Payment reference'},
+    {key:'date',label:t('date'),type:'date'},
+    {key:'notes',label:t('notes'),type:'textarea',placeholder:'Payment notes...'},
+  ],
+  stockTransfer:(t)=>[
+    {key:'product',label:t('product'),type:'select',options:['iPhone 15 Pro Max Screen','iPhone 15 Pro Screen','iPhone 14 Pro Max Screen','iPhone 15 Pro Max Battery','iPhone 14 Pro Max Battery','iPhone 15 Pro Max Rear Camera','iPhone 15 USB-C Charging Port'],placeholder:'Select product...'},
+    {key:'from',label:'From Warehouse',type:'select',options:['SZ-MAIN (Shenzhen)','AMS-HUB (Amsterdam)','UK-FWD (London)'],placeholder:'Origin...'},
+    {key:'to',label:'To Warehouse',type:'select',options:['SZ-MAIN (Shenzhen)','AMS-HUB (Amsterdam)','UK-FWD (London)'],placeholder:'Destination...'},
+    {key:'qty',label:t('qty'),type:'number',placeholder:'0'},
+    {key:'notes',label:t('notes'),type:'textarea',placeholder:'Transfer notes...'},
+  ],
+  user:(t)=>[
+    {key:'name',label:t('name'),placeholder:'Full name'},
+    {key:'email',label:t('email'),type:'email',placeholder:'user@aplong.com'},
+    {key:'role',label:t('role'),type:'select',options:['SUPER_ADMIN','WAREHOUSE_MANAGER','WAREHOUSE_OPERATIVE','SALES_MANAGER','SALES_AGENT','FINANCE','SUPPORT_AGENT','CUSTOMER_ADMIN'],placeholder:t('selectRole')},
+  ],
+};
+
+function LoginPage({onLogin,lang,setLang}){
+  const t=useT(lang);
+  const [email,setEmail]=useState('admin@aplong.com');
+  const [pass,setPass]=useState('');
+  return React.createElement('div',{className:'login-page'},
+    React.createElement('div',{style:{position:'absolute',top:20,right:20}},
+      React.createElement('select',{className:'lang-select',style:{background:'rgba(255,255,255,0.15)',color:'#fff',border:'1px solid rgba(255,255,255,0.3)'},value:lang,onChange:e=>setLang(e.target.value)},
+        React.createElement('option',{value:'en',style:{color:'#000'}},'EN \u{1F1EC}\u{1F1E7}'),
+        React.createElement('option',{value:'nl',style:{color:'#000'}},'NL \u{1F1F3}\u{1F1F1}'),
+        React.createElement('option',{value:'zh',style:{color:'#000'}},'ZH \u{1F1E8}\u{1F1F3}')
+      )
+    ),
+    React.createElement('div',{className:'login-card'},
+      React.createElement('h1',null,'Aplong ',React.createElement('span',{style:{color:'#93c5fd'}},'NexGen')),
+      React.createElement('p',null,t('loginSubtitle')),
+      React.createElement('div',{className:'form-group'},
+        React.createElement('label',null,t('email')),
+        React.createElement('input',{type:'email',value:email,onChange:e=>setEmail(e.target.value),placeholder:'admin@aplong.com'})
+      ),
+      React.createElement('div',{className:'form-group'},
+        React.createElement('label',null,t('password')),
+        React.createElement('input',{type:'password',value:pass,onChange:e=>setPass(e.target.value),placeholder:t('password'),onKeyDown:e=>e.key==='Enter'&&onLogin()})
+      ),
+      React.createElement('button',{className:'btn btn-primary',onClick:onLogin},t('signIn')),
+      React.createElement('p',{style:{textAlign:'center',marginTop:16,fontSize:'.8rem',color:'#9ca3af'}},t('demoNote'))
+    )
+  );
+}
+
+function Sidebar({active,onNav,lang,isOpen,onClose}){
+  const t=useT(lang);
+  const sections = [
+    {title:t('operations'),items:[
+      {key:'dashboard',icon:'\u{1F4CA}',label:t('dashboard')},
+      {key:'orders',icon:'\u{1F4E6}',label:t('orders'),badge:3},
+      {key:'products',icon:'\u{1F4F1}',label:t('products')},
+      {key:'shipments',icon:'\u{1F69A}',label:t('shipments')},
+    ]},
+    {title:t('finance'),items:[
+      {key:'invoices',icon:'\u{1F4C4}',label:t('invoices'),badge:1},
+      {key:'payments',icon:'\u{1F4B3}',label:t('payments')},
+    ]},
+    {title:t('customer'),items:[
+      {key:'rma',icon:'\u{1F504}',label:t('rma')},
+      {key:'buyback',icon:'\u267B',label:t('buyback')},
+      {key:'crm',icon:'\u{1F465}',label:t('crm')},
+      {key:'comms',icon:'\u{1F4AC}',label:t('comms')},
+    ]},
+    {title:t('system'),items:[
+      {key:'reports',icon:'\u{1F4C8}',label:t('reports')},
+      {key:'automation',icon:'\u{1F916}',label:t('automation')},
+      {key:'settings',icon:'\u2699',label:t('settings')},
+    ]},
+  ];
+  const handleNav=(key)=>{onNav(key);onClose&&onClose();};
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{className:'sidebar-overlay'+(isOpen?' open':''),onClick:onClose}),
+    React.createElement('div',{className:'sidebar'+(isOpen?' open':'')},
+      React.createElement('div',{className:'sidebar-logo'},
+        React.createElement('h2',null,'Aplong ',React.createElement('span',null,'NexGen')),
+        React.createElement('div',{className:'subtitle'},t('subtitle'))
+      ),
+      React.createElement('nav',{className:'sidebar-nav'},
+        sections.map(s=>React.createElement('div',{key:s.title,className:'nav-section'},
+          React.createElement('div',{className:'nav-section-title'},s.title),
+          s.items.map(i=>React.createElement('div',{key:i.key,className:'nav-item'+(active===i.key?' active':''),onClick:()=>handleNav(i.key)},
+            React.createElement('span',{className:'icon'},i.icon),
+            i.label,
+            i.badge?React.createElement('span',{className:'badge-count'},i.badge):null
+          ))
+        ))
+      )
+    )
+  );
+}
+
+function NotificationDropdown({notifications,onClose,lang}){
+  const t=useT(lang);
+  const ref=useRef();
+  useEffect(()=>{
+    const handler=(e)=>{if(ref.current&&!ref.current.contains(e.target))onClose();};
+    document.addEventListener('mousedown',handler);
+    return()=>document.removeEventListener('mousedown',handler);
+  },[]);
+  return React.createElement('div',{className:'notif-dropdown',ref},
+    React.createElement('div',{className:'notif-dropdown-header'},
+      React.createElement('span',null,t('notifications')),
+      React.createElement('button',{className:'btn btn-sm btn-outline',onClick:onClose,style:{fontSize:'.75rem'}},t('markAllRead'))
+    ),
+    notifications.map(n=>React.createElement('div',{key:n.id,className:'notif-item'},
+      React.createElement('div',{className:'notif-icon',style:{background:n.bg}},n.icon),
+      React.createElement('div',{className:'notif-text'},
+        React.createElement('div',{className:'notif-title'},n.title),
+        React.createElement('div',{className:'notif-time'},n.time)
+      ),
+      n.unread&&React.createElement('div',{className:'notif-unread'})
+    ))
+  );
+}
+
+function Topbar({title,lang,setLang,darkMode,setDarkMode,onMenuToggle}){
+  const t=useT(lang);
+  const [showNotif,setShowNotif]=useState(false);
+  return React.createElement('div',{className:'topbar'},
+    React.createElement('div',{className:'topbar-left'},
+      React.createElement('button',{className:'hamburger',onClick:onMenuToggle},'\u2630'),
+      React.createElement('h2',null,title)
+    ),
+    React.createElement('div',{className:'topbar-right'},
+      React.createElement('input',{className:'topbar-search',placeholder:t('search')}),
+      React.createElement('select',{className:'lang-select',value:lang,onChange:e=>setLang(e.target.value)},
+        React.createElement('option',{value:'en'},'EN \u{1F1EC}\u{1F1E7}'),
+        React.createElement('option',{value:'nl'},'NL \u{1F1F3}\u{1F1F1}'),
+        React.createElement('option',{value:'zh'},'ZH \u{1F1E8}\u{1F1F3}')
+      ),
+      React.createElement('button',{className:'theme-toggle',onClick:()=>setDarkMode(!darkMode),title:darkMode?'Light mode':'Dark mode'},darkMode?'\u2600\uFE0F':'\u{1F319}'),
+      React.createElement('div',{style:{position:'relative'}},
+        React.createElement('button',{className:'notif-btn',onClick:()=>setShowNotif(!showNotif)},'\u{1F514}',React.createElement('span',{className:'dot'})),
+        showNotif&&React.createElement(NotificationDropdown,{notifications:NOTIFICATIONS,onClose:()=>setShowNotif(false),lang})
+      ),
+      React.createElement('div',{className:'user-avatar'},'AS')
+    )
+  );
+}
+
+// ─── Order Detail Modal ─────────────────────────────────────
+function OrderDetailModal({order,onClose,lang}){
+  const t=useT(lang);
+  if(!order) return null;
+  return React.createElement('div',{className:'modal-overlay',onClick:e=>{if(e.target===e.currentTarget)onClose()}},
+    React.createElement('div',{className:'modal'},
+      React.createElement('h3',null,
+        t('orderDetails')+': '+order.id,
+        React.createElement('button',{className:'modal-close',onClick:onClose},'\u2715')
+      ),
+      React.createElement('div',{className:'detail-grid'},
+        React.createElement('div',{className:'detail-item'},React.createElement('div',{className:'detail-label'},t('company')),React.createElement('div',{className:'detail-value'},order.company)),
+        React.createElement('div',{className:'detail-item'},React.createElement('div',{className:'detail-label'},t('status')),React.createElement('div',{className:'detail-value'},React.createElement('span',{className:'badge '+statusBadge(order.status)},fmt(order.status)))),
+        React.createElement('div',{className:'detail-item'},React.createElement('div',{className:'detail-label'},t('total')),React.createElement('div',{className:'detail-value'},order.total)),
+        React.createElement('div',{className:'detail-item'},React.createElement('div',{className:'detail-label'},t('warehouse')),React.createElement('div',{className:'detail-value'},React.createElement('span',{className:'badge badge-blue'},order.warehouse))),
+        React.createElement('div',{className:'detail-item'},React.createElement('div',{className:'detail-label'},t('date')),React.createElement('div',{className:'detail-value'},order.date)),
+        React.createElement('div',{className:'detail-item'},React.createElement('div',{className:'detail-label'},t('items')),React.createElement('div',{className:'detail-value'},order.items+' items'))
+      ),
+      order.lineItems&&React.createElement(React.Fragment,null,
+        React.createElement('h4',{style:{fontWeight:700,marginBottom:12,fontSize:'.9rem'}},t('lineItems')),
+        React.createElement('table',{style:{marginBottom:20}},
+          React.createElement('thead',null,React.createElement('tr',null,
+            React.createElement('th',null,t('product')),React.createElement('th',null,t('qty')),React.createElement('th',null,t('price'))
+          )),
+          React.createElement('tbody',null,
+            order.lineItems.map((li,i)=>React.createElement('tr',{key:i},
+              React.createElement('td',null,li.name),
+              React.createElement('td',null,li.qty),
+              React.createElement('td',{style:{fontWeight:600}},li.price)
+            ))
+          )
+        )
+      ),
+      order.timeline&&React.createElement(React.Fragment,null,
+        React.createElement('h4',{style:{fontWeight:700,marginBottom:12,fontSize:'.9rem'}},t('orderTimeline')),
+        React.createElement('div',{className:'timeline'},
+          order.timeline.map((step,i)=>React.createElement('div',{key:i,className:'timeline-item'},
+            React.createElement('div',{className:'timeline-dot'+(step.done?' completed':'')}),
+            React.createElement('div',{className:'timeline-content'},
+              React.createElement('h4',null,step.event),
+              React.createElement('p',null,step.time)
+            )
+          ))
+        )
+      ),
+      React.createElement('div',{className:'actions-row'},
+        React.createElement('button',{className:'btn btn-outline btn-sm'},'\u{1F4C4} '+t('invoice')),
+        React.createElement('button',{className:'btn btn-outline btn-sm'},'\u{1F4E5} '+t('exportCsv')),
+        React.createElement('button',{className:'btn btn-primary btn-sm',onClick:onClose},'Close')
+      )
+    )
+  );
+}
+
+// ─── Page Components ────────────────────────────────────────
+function DashboardPage({lang,onNav,onToast}){
+  const t=useT(lang);
+  const maxRevenue = Math.max(...REVENUE_DATA.map(d=>d.value));
+  const colors = ['#3b82f6','#60a5fa','#2563eb','#818cf8','#6366f1','#1e40af'];
+  const [showQA,setShowQA]=useState(null);
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{className:'quick-actions'},
+      [{icon:'\u{1F4E6}',text:t('newOrder'),action:'order'},{icon:'\u{1F4C4}',text:t('newInvoice'),action:'invoice'},{icon:'\u{1F4B3}',text:'Record Payment',action:'payment'},{icon:'\u{1F69A}',text:t('createShipment'),action:'shipment'}].map(qa=>
+        React.createElement('div',{key:qa.action,className:'quick-action',onClick:()=>setShowQA(qa.action)},
+          React.createElement('span',{className:'qa-icon'},qa.icon),
+          React.createElement('span',{className:'qa-text'},qa.text)
+        )
+      )
+    ),
+    showQA&&React.createElement(CreateFormModal,{title:{order:t('newOrderTitle'),invoice:t('newInvoiceTitle'),payment:'Record Payment',shipment:t('newShipmentTitle')}[showQA],fields:(FORM_CONFIGS[showQA]||FORM_CONFIGS.order)(t),lang,onClose:()=>setShowQA(null),onSubmit:()=>{onToast&&onToast(showQA+' '+t('created'));setShowQA(null);}}),
+    React.createElement('div',{className:'stat-grid'},
+      React.createElement('div',{className:'stat-card'},
+        React.createElement('div',{className:'stat-label'},t('revenueMtd')),
+        React.createElement('div',{className:'stat-value'},'\u00A3248,000'),
+        React.createElement('div',{className:'stat-change up'},'\u2191 18.1% ',t('vsLastMonth'))
+      ),
+      React.createElement('div',{className:'stat-card'},
+        React.createElement('div',{className:'stat-label'},t('activeOrders')),
+        React.createElement('div',{className:'stat-value'},'47'),
+        React.createElement('div',{className:'stat-change up'},'\u2191 12 ',t('newToday'))
+      ),
+      React.createElement('div',{className:'stat-card'},
+        React.createElement('div',{className:'stat-label'},t('openRmas')),
+        React.createElement('div',{className:'stat-value'},'8'),
+        React.createElement('div',{className:'stat-change down'},'\u2193 3 ',t('overdueSla'))
+      ),
+      React.createElement('div',{className:'stat-card'},
+        React.createElement('div',{className:'stat-label'},t('pendingInvoices')),
+        React.createElement('div',{className:'stat-value'},'\u00A312,785'),
+        React.createElement('div',{className:'stat-change down'},'1 ',t('overdue'))
+      )
+    ),
+    React.createElement('div',{style:{display:'grid',gridTemplateColumns:'2fr 1fr',gap:20}},
+      React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},
+          React.createElement('h3',null,t('revenueTrend')),
+          React.createElement('span',{style:{fontSize:'.8rem',color:'var(--text-secondary)'}},t('gbpEquiv'))
+        ),
+        React.createElement('div',{className:'chart-container'},
+          React.createElement('div',{className:'chart-bar-group'},
+            REVENUE_DATA.map((d,i)=>React.createElement('div',{key:d.month,className:'chart-bar',style:{height:(d.value/maxRevenue*100)+'%',background:colors[i],animationDelay:(i*80)+'ms'}},
+              React.createElement('div',{className:'tooltip'},'\u00A3'+(d.value/1000).toFixed(0)+'k \u2022 '+d.month+' 2026')
+            ))
+          ),
+          React.createElement('div',{className:'chart-labels'},
+            REVENUE_DATA.map(d=>React.createElement('span',{key:d.month},d.month))
+          )
+        )
+      ),
+      React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,t('warehouseStock'))),
+        React.createElement('div',{style:{padding:20}},
+          [{name:'SZ-MAIN (Shenzhen)',val:2442,max:3000,color:'fill-blue'},
+           {name:'AMS-HUB (Amsterdam)',val:1342,max:2000,color:'fill-green'},
+           {name:'UK-FWD (London)',val:0,max:500,color:'fill-orange'}
+          ].map(w=>React.createElement('div',{key:w.name,style:{marginBottom:16}},
+            React.createElement('div',{style:{display:'flex',justifyContent:'space-between',fontSize:'.85rem',marginBottom:4}},
+              React.createElement('span',{style:{fontWeight:600}},w.name),
+              React.createElement('span',{style:{color:'var(--text-secondary)'}},w.val.toLocaleString()+' '+t('units'))
+            ),
+            React.createElement('div',{className:'progress-bar'},
+              React.createElement('div',{className:'fill '+w.color,style:{width:(w.val/w.max*100)+'%'}})
+            )
+          ))
+        )
+      )
+    ),
+    React.createElement('div',{className:'card'},
+      React.createElement('div',{className:'card-header'},
+        React.createElement('h3',null,t('recentOrders')),
+        React.createElement('button',{className:'btn btn-outline btn-sm'},t('viewAll'))
+      ),
+      React.createElement('div',{className:'card-body'},
+        React.createElement('table',null,
+          React.createElement('thead',null,React.createElement('tr',null,
+            React.createElement('th',null,t('order')),React.createElement('th',null,t('company')),React.createElement('th',null,t('items')),React.createElement('th',null,t('total')),React.createElement('th',null,t('status')),React.createElement('th',null,t('date'))
+          )),
+          React.createElement('tbody',null,
+            ORDERS.slice(0,5).map(o=>React.createElement('tr',{key:o.id},
+              React.createElement('td',null,React.createElement('span',{style:{fontWeight:600,color:'var(--blue)'}},o.id)),
+              React.createElement('td',null,o.company),
+              React.createElement('td',null,o.items),
+              React.createElement('td',{style:{fontWeight:600}},o.total),
+              React.createElement('td',null,React.createElement('span',{className:'badge '+statusBadge(o.status)},fmt(o.status))),
+              React.createElement('td',{style:{color:'var(--text-secondary)'}},o.date)
+            ))
+          )
+        )
+      )
+    ),
+    React.createElement('div',{className:'card'},
+      React.createElement('div',{className:'card-header'},
+        React.createElement('h3',null,'Recent Activity'),
+        React.createElement('button',{className:'btn btn-outline btn-sm'},t('viewAll'))
+      ),
+      React.createElement('div',{className:'activity-feed'},
+        ACTIVITY_FEED.map((a,i)=>React.createElement('div',{key:i,className:'activity-item'},
+          React.createElement('div',{className:'activity-icon',style:{background:a.bg}},a.icon),
+          React.createElement('div',{className:'activity-text'},
+            React.createElement('div',null,a.text),
+            React.createElement('div',{className:'at-time'},a.time)
+          )
+        ))
+      )
+    )
+  );
+}
+
+function OrdersPage({onToast,lang}){
+  const t=useT(lang);
+  const [filter,setFilter]=useState('ALL');
+  const [selectedOrder,setSelectedOrder]=useState(null);
+  const [showCreate,setShowCreate]=useState(false);
+  const filtered = filter==='ALL'?ORDERS:ORDERS.filter(o=>o.status===filter);
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20,flexWrap:'wrap',gap:12}},
+      React.createElement('div',{className:'entity-chips'},
+        ['ALL','CONFIRMED','PROCESSING','DISPATCHED','DELIVERED','CLOSED'].map(f=>
+          React.createElement('span',{key:f,className:'entity-chip'+(filter===f?' active':''),onClick:()=>setFilter(f)},f==='ALL'?t('allOrders'):fmt(f))
+        )
+      ),
+      React.createElement('button',{className:'btn btn-primary btn-sm',onClick:()=>setShowCreate(true)},t('newOrder'))
+    ),
+    React.createElement('div',{className:'card'},
+      React.createElement('div',{className:'card-body'},
+        React.createElement('table',null,
+          React.createElement('thead',null,React.createElement('tr',null,
+            React.createElement('th',null,t('order')+' #'),React.createElement('th',null,t('company')),React.createElement('th',null,t('warehouse')),React.createElement('th',null,t('items')),React.createElement('th',null,t('total')),React.createElement('th',null,t('status')),React.createElement('th',null,t('date'))
+          )),
+          React.createElement('tbody',null,
+            filtered.map(o=>React.createElement('tr',{key:o.id,className:'clickable-row',onClick:()=>setSelectedOrder(o)},
+              React.createElement('td',null,React.createElement('span',{style:{fontWeight:600,color:'var(--blue)',cursor:'pointer'}},o.id)),
+              React.createElement('td',null,o.company),
+              React.createElement('td',null,React.createElement('span',{className:'badge badge-blue'},o.warehouse)),
+              React.createElement('td',null,o.items),
+              React.createElement('td',{style:{fontWeight:600}},o.total),
+              React.createElement('td',null,React.createElement('span',{className:'badge '+statusBadge(o.status)},fmt(o.status))),
+              React.createElement('td',{style:{color:'var(--text-secondary)'}},o.date)
+            ))
+          )
+        )
+      )
+    ),
+    selectedOrder&&React.createElement(OrderDetailModal,{order:selectedOrder,onClose:()=>setSelectedOrder(null),lang}),
+    showCreate&&React.createElement(CreateFormModal,{title:t('newOrderTitle'),fields:FORM_CONFIGS.order(t),lang,onClose:()=>setShowCreate(false),onSubmit:(v)=>{setShowCreate(false);onToast(t('order')+' '+t('created'));}})
+  );
+}
+
+function ProductsPage({lang,onToast}){
+  const t=useT(lang);
+  const [search,setSearch]=useState('');
+  const [showCreate,setShowCreate]=useState(false);
+  const [showTransfer,setShowTransfer]=useState(false);
+  const filtered = PRODUCTS.filter(p=>p.name.toLowerCase().includes(search.toLowerCase())||p.sku.toLowerCase().includes(search.toLowerCase()));
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:20,flexWrap:'wrap',gap:12}},
+      React.createElement('input',{className:'topbar-search',placeholder:t('search'),value:search,onChange:e=>setSearch(e.target.value),style:{width:320}}),
+      React.createElement('div',{style:{display:'flex',gap:8}},
+        React.createElement('button',{className:'btn btn-outline btn-sm',onClick:()=>setShowTransfer(true)},'\u{1F504} Transfer Stock'),
+        React.createElement('button',{className:'btn btn-primary btn-sm',onClick:()=>setShowCreate(true)},'+ '+t('product'))
+      )
+    ),
+    React.createElement('div',{className:'card'},
+      React.createElement('div',{className:'card-body'},
+        React.createElement('table',null,
+          React.createElement('thead',null,React.createElement('tr',null,
+            React.createElement('th',null,t('sku')),React.createElement('th',null,t('product')),React.createElement('th',null,t('grade')),React.createElement('th',null,t('price')),React.createElement('th',null,t('sz')),React.createElement('th',null,t('ams')),React.createElement('th',null,t('status'))
+          )),
+          React.createElement('tbody',null,
+            filtered.map(p=>React.createElement('tr',{key:p.sku},
+              React.createElement('td',null,React.createElement('span',{style:{fontFamily:'monospace',fontSize:'.8rem',color:'var(--text-secondary)'}},p.sku)),
+              React.createElement('td',{style:{fontWeight:500}},p.name),
+              React.createElement('td',null,React.createElement('span',{className:'badge '+(p.grade==='OEM'?'badge-green':'badge-orange')},p.grade)),
+              React.createElement('td',{style:{fontWeight:600}},p.price),
+              React.createElement('td',null,p.stock.sz),
+              React.createElement('td',null,p.stock.ams),
+              React.createElement('td',null,React.createElement('span',{className:'badge '+(p.status==='In Stock'?'badge-green':p.status==='Low Stock'?'badge-orange':'badge-red')},p.status))
+            ))
+          )
+        )
+      )
+    ),
+    showCreate&&React.createElement(CreateFormModal,{title:t('newProductTitle'),fields:FORM_CONFIGS.product(t),lang,onClose:()=>setShowCreate(false),onSubmit:(v)=>{setShowCreate(false);onToast(t('product')+' '+t('created'));}}),
+    showTransfer&&React.createElement(CreateFormModal,{title:'\u{1F504} Stock Transfer',fields:FORM_CONFIGS.stockTransfer(t),lang,onClose:()=>setShowTransfer(false),onSubmit:(v)=>{setShowTransfer(false);onToast('Stock transfer initiated: '+v.qty+' units '+v.from+' \u2192 '+v.to);}})
+  );
+}
+
+function InvoicesPage({onToast,lang}){
+  const t=useT(lang);
+  const [entity,setEntity]=useState('ALL');
+  const [showCreate,setShowCreate]=useState(false);
+  const [showPayment,setShowPayment]=useState(false);
+  const filtered = entity==='ALL'?INVOICES:INVOICES.filter(i=>i.entity===entity);
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{className:'kpi-row'},
+      React.createElement('div',{className:'kpi-pill'},React.createElement('div',{className:'kpi-val'},'\u00A3248,000'),React.createElement('div',{className:'kpi-label'},t('revenueYtd'))),
+      React.createElement('div',{className:'kpi-pill'},React.createElement('div',{className:'kpi-val'},'\u00A312,785'),React.createElement('div',{className:'kpi-label'},t('outstanding'))),
+      React.createElement('div',{className:'kpi-pill'},React.createElement('div',{className:'kpi-val',style:{color:'var(--red)'}},'\u00A38,940'),React.createElement('div',{className:'kpi-label'},t('overdue'))),
+      React.createElement('div',{className:'kpi-pill'},React.createElement('div',{className:'kpi-val'},'94%'),React.createElement('div',{className:'kpi-label'},t('collectionRate')))
+    ),
+    React.createElement('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:20,flexWrap:'wrap',gap:12}},
+      React.createElement('div',{className:'entity-chips'},
+        [['ALL','All'],['UK','\u{1F1EC}\u{1F1E7} UK'],['NL','\u{1F1F3}\u{1F1F1} Netherlands'],['CN','\u{1F1E8}\u{1F1F3} China']].map(([k,l])=>
+          React.createElement('span',{key:k,className:'entity-chip'+(entity===k?' active':''),onClick:()=>setEntity(k)},l)
+        )
+      ),
+      React.createElement('div',{style:{display:'flex',gap:8}},
+        React.createElement('button',{className:'btn btn-outline btn-sm',onClick:()=>onToast('CSV exported')},'\u{1F4E5} '+t('exportCsv')),
+        React.createElement('button',{className:'btn btn-outline btn-sm',onClick:()=>setShowPayment(true)},'\u{1F4B3} Record Payment'),
+        React.createElement('button',{className:'btn btn-primary btn-sm',onClick:()=>setShowCreate(true)},t('newInvoice'))
+      )
+    ),
+    React.createElement('div',{className:'card'},
+      React.createElement('div',{className:'card-body'},
+        React.createElement('table',null,
+          React.createElement('thead',null,React.createElement('tr',null,
+            React.createElement('th',null,t('invoice')),React.createElement('th',null,t('company')),React.createElement('th',null,t('entity')),React.createElement('th',null,t('amount')),React.createElement('th',null,t('paid')),React.createElement('th',null,t('status')),React.createElement('th',null,t('due'))
+          )),
+          React.createElement('tbody',null,
+            filtered.map(i=>React.createElement('tr',{key:i.id},
+              React.createElement('td',null,React.createElement('span',{style:{fontWeight:600,color:'var(--blue)',cursor:'pointer'}},i.id)),
+              React.createElement('td',null,i.company),
+              React.createElement('td',null,React.createElement('span',{className:'badge badge-blue'},i.entity)),
+              React.createElement('td',{style:{fontWeight:600}},i.amount),
+              React.createElement('td',null,i.paid),
+              React.createElement('td',null,React.createElement('span',{className:'badge '+statusBadge(i.status)},fmt(i.status))),
+              React.createElement('td',{style:{color:i.status==='OVERDUE'?'var(--red)':'var(--text-secondary)'}},i.due)
+            ))
+          )
+        )
+      )
+    ),
+    showCreate&&React.createElement(CreateFormModal,{title:t('newInvoiceTitle'),fields:FORM_CONFIGS.invoice(t),lang,onClose:()=>setShowCreate(false),onSubmit:(v)=>{setShowCreate(false);onToast(t('invoice')+' '+t('created'));}}),
+    showPayment&&React.createElement(CreateFormModal,{title:'\u{1F4B3} Record Payment',fields:FORM_CONFIGS.payment(t),lang,onClose:()=>setShowPayment(false),onSubmit:(v)=>{setShowPayment(false);onToast('Payment of '+v.amount+' recorded for '+v.invoice);}})
+  );
+}
+
+function RmaPage({lang,onToast}){
+  const t=useT(lang);
+  const [showCreate,setShowCreate]=useState(false);
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{className:'stat-grid'},
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('openRmas')),React.createElement('div',{className:'stat-value'},'8')),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('avgResolution')),React.createElement('div',{className:'stat-value'},'4.2 '+t('days'))),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('slaCompliance')),React.createElement('div',{className:'stat-value'},'87%')),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('thisMonth')),React.createElement('div',{className:'stat-value'},'12'))
+    ),
+    React.createElement('div',{className:'card'},
+      React.createElement('div',{className:'card-header'},React.createElement('h3',null,t('returnRequests')),React.createElement('button',{className:'btn btn-primary btn-sm',onClick:()=>setShowCreate(true)},t('newRma'))),
+      React.createElement('div',{className:'card-body'},
+        React.createElement('table',null,
+          React.createElement('thead',null,React.createElement('tr',null,
+            React.createElement('th',null,'RMA #'),React.createElement('th',null,t('order')),React.createElement('th',null,t('company')),React.createElement('th',null,t('reason')),React.createElement('th',null,t('items')),React.createElement('th',null,t('status')),React.createElement('th',null,t('sla'))
+          )),
+          React.createElement('tbody',null,
+            RMAS.map(r=>React.createElement('tr',{key:r.id},
+              React.createElement('td',null,React.createElement('span',{style:{fontWeight:600,color:'var(--blue)'}},r.id)),
+              React.createElement('td',{style:{fontFamily:'monospace',fontSize:'.8rem'}},r.order),
+              React.createElement('td',null,r.company),
+              React.createElement('td',null,r.reason),
+              React.createElement('td',null,r.items),
+              React.createElement('td',null,React.createElement('span',{className:'badge '+statusBadge(r.status)},fmt(r.status))),
+              React.createElement('td',{style:{width:120}},
+                React.createElement('div',{style:{fontSize:'.75rem',color:'var(--text-secondary)',marginBottom:2}},r.sla+'h / '+r.slaMax+'h'),
+                React.createElement('div',{className:'progress-bar'},
+                  React.createElement('div',{className:'fill '+(r.sla/r.slaMax>.75?'fill-red':r.sla/r.slaMax>.5?'fill-orange':'fill-green'),style:{width:(r.sla/r.slaMax*100)+'%'}})
+                )
+              )
+            ))
+          )
+        )
+      )
+    ),
+    showCreate&&React.createElement(CreateFormModal,{title:t('newRmaTitle'),fields:FORM_CONFIGS.rma(t),lang,onClose:()=>setShowCreate(false),onSubmit:(v)=>{setShowCreate(false);onToast('RMA '+t('created'));}})
+  );
+}
+
+// ─── CRM: Kanban, Companies, Org Chart ──────────────────────
+function KanbanBoard({leads,lang}){
+  const t=useT(lang);
+  const stages=['PROSPECT','CONTACTED','QUALIFIED','DEMO_SAMPLE','NEGOTIATION'];
+  const stageColors={PROSPECT:'var(--gray-400)',CONTACTED:'var(--blue-500)',QUALIFIED:'var(--orange)',DEMO_SAMPLE:'var(--purple)',NEGOTIATION:'var(--green)'};
+  const [dragItem,setDragItem]=useState(null);
+  const [board,setBoard]=useState(()=>{const b={};stages.forEach(s=>{b[s]=leads.filter(l=>l.stage===s)});return b;});
+  const handleDragStart=(lead,fromStage)=>{setDragItem({lead,fromStage})};
+  const handleDrop=(toStage)=>{
+    if(!dragItem||dragItem.fromStage===toStage)return;
+    setBoard(prev=>{const next={...prev};next[dragItem.fromStage]=prev[dragItem.fromStage].filter(l=>l.name!==dragItem.lead.name);next[toStage]=[...prev[toStage],{...dragItem.lead,stage:toStage}];return next;});
+    setDragItem(null);
+  };
+  return React.createElement('div',{className:'kanban-board'},
+    stages.map(stage=>React.createElement('div',{key:stage,className:'kanban-column',onDragOver:e=>e.preventDefault(),onDrop:()=>handleDrop(stage)},
+      React.createElement('div',{className:'kanban-column-header'},
+        React.createElement('h4',null,React.createElement('span',{style:{width:8,height:8,borderRadius:'50%',background:stageColors[stage],display:'inline-block'}}),fmt(stage)),
+        React.createElement('span',{className:'kanban-count'},board[stage].length)
+      ),
+      React.createElement('div',{className:'kanban-cards'},
+        board[stage].map(lead=>React.createElement('div',{key:lead.name,className:'kanban-card'+(dragItem&&dragItem.lead.name===lead.name?' dragging':''),
+          draggable:true,onDragStart:()=>handleDragStart(lead,stage)},
+          React.createElement('div',{className:'kc-company'},lead.name),
+          React.createElement('div',{className:'kc-contact'},lead.contact),
+          React.createElement('div',{className:'kc-footer'},
+            React.createElement('span',{className:'kc-value'},lead.value),
+            React.createElement('span',{className:'kc-score badge '+(lead.score>70?'badge-green':lead.score>40?'badge-orange':'badge-red')},lead.score))
+        ))
+      )
+    ))
+  );
+}
+
+function OrgChart({contacts}){
+  const director=contacts.find(c=>c.role.includes('Director')||c.role.includes('CEO')||c.role.includes('Owner')||c.role.includes('General Manager')||c.role.includes('Founder'));
+  const others=contacts.filter(c=>c!==director);
+  const colors=['var(--blue)','var(--green)','var(--purple)','var(--orange)','var(--red)'];
+  const node=(c,i,isDir)=>React.createElement('div',{className:'org-node'+(isDir?' director':''),key:c.name},
+    React.createElement('div',{className:'on-name'},c.name),
+    React.createElement('div',{className:'on-role'},c.role),
+    React.createElement('div',{style:{fontSize:'.7rem',color:'var(--text-secondary)',marginTop:4}},c.email)
+  );
+  if(!director)return React.createElement('div',{className:'org-chart'},
+    React.createElement('div',{className:'org-row'},contacts.map((c,i)=>React.createElement('div',{className:'org-branch',key:c.name},node(c,i,false))))
+  );
+  return React.createElement('div',{className:'org-chart'},
+    node(director,0,true),
+    others.length>0&&React.createElement(React.Fragment,null,
+      React.createElement('div',{className:'org-connector'}),
+      React.createElement('div',{className:'org-h-line',style:{width:Math.max(others.length*164,200),alignSelf:'center'}}),
+      React.createElement('div',{className:'org-row'},
+        others.map((c,i)=>React.createElement('div',{className:'org-branch',key:c.name},
+          React.createElement('div',{className:'org-connector'}),
+          node(c,i,false)
+        ))
+      )
+    )
+  );
+}
+
+function CompanyDetail({company,onBack,lang}){
+  const t=useT(lang);
+  const [tab,setTab]=useState('overview');
+  const avatarColors=['#3b82f6','#059669','#7c3aed','#d97706','#dc2626','#0891b2'];
+  const companyOrders=ORDERS.filter(o=>o.company===company.name);
+  const companyInvoices=INVOICES.filter(i=>i.company===company.name);
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{className:'company-detail-back',onClick:onBack},'\u2190 Back to Companies'),
+    React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20,flexWrap:'wrap',gap:12}},
+      React.createElement('div',null,
+        React.createElement('h2',{style:{fontSize:'1.4rem',fontWeight:800}},company.name),
+        React.createElement('div',{style:{color:'var(--text-secondary)',fontSize:'.9rem'}},company.country,' \u2022 ',company.entity,' entity \u2022 Since ',company.since)
+      ),
+      React.createElement('div',{style:{display:'flex',gap:8}},
+        React.createElement('span',{className:'badge '+(company.status==='Active'?'badge-green':'badge-gray')},company.status),
+        React.createElement('span',{className:'badge badge-blue'},company.terms)
+      )
+    ),
+    React.createElement('div',{className:'tab-bar',style:{marginBottom:20}},
+      ['overview','contacts','orgChart','orders','invoices','notes'].map(tb=>
+        React.createElement('span',{key:tb,className:'tab'+(tab===tb?' active':''),onClick:()=>setTab(tb)},
+          {overview:'Overview',contacts:'Contacts ('+company.contacts.length+')',orgChart:'Org Chart',orders:'Orders ('+companyOrders.length+')',invoices:'Invoices ('+companyInvoices.length+')',notes:'Activity ('+company.notes.length+')'}[tb]
+        )
+      )
+    ),
+    tab==='overview'&&React.createElement(React.Fragment,null,
+      React.createElement('div',{className:'stat-grid'},
+        React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},'Total Revenue'),React.createElement('div',{className:'stat-value'},company.revenue)),
+        React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},'Total Orders'),React.createElement('div',{className:'stat-value'},company.orders)),
+        React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},'Credit Limit'),React.createElement('div',{className:'stat-value'},company.creditLimit)),
+        React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},'Primary Contact'),React.createElement('div',{className:'stat-value',style:{fontSize:'1rem'}},(company.contacts.find(c=>c.isPrimary)||company.contacts[0]).name))
+      ),
+      React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,'Company Details')),
+        React.createElement('div',{style:{padding:20}},
+          React.createElement('div',{className:'detail-grid'},
+            React.createElement('div',{className:'detail-item'},React.createElement('div',{className:'detail-label'},'Country'),React.createElement('div',{className:'detail-value'},company.country)),
+            React.createElement('div',{className:'detail-item'},React.createElement('div',{className:'detail-label'},'Entity'),React.createElement('div',{className:'detail-value'},company.entity)),
+            React.createElement('div',{className:'detail-item'},React.createElement('div',{className:'detail-label'},'Payment Terms'),React.createElement('div',{className:'detail-value'},company.terms)),
+            React.createElement('div',{className:'detail-item'},React.createElement('div',{className:'detail-label'},'Credit Limit'),React.createElement('div',{className:'detail-value'},company.creditLimit)),
+            React.createElement('div',{className:'detail-item'},React.createElement('div',{className:'detail-label'},'Customer Since'),React.createElement('div',{className:'detail-value'},company.since)),
+            React.createElement('div',{className:'detail-item'},React.createElement('div',{className:'detail-label'},'Total Orders'),React.createElement('div',{className:'detail-value'},company.orders))
+          )
+        )
+      )
+    ),
+    tab==='contacts'&&React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:12}},
+      company.contacts.map((c,i)=>React.createElement('div',{key:c.name,className:'contact-card'+(c.isPrimary?' primary':'')},
+        React.createElement('div',{className:'contact-avatar',style:{background:avatarColors[i%avatarColors.length]}},c.name.split(' ').map(n=>n[0]).join('')),
+        React.createElement('div',{className:'contact-info'},
+          React.createElement('div',{className:'ci-name'},c.name,c.isPrimary?React.createElement('span',{className:'badge badge-blue',style:{marginLeft:8,fontSize:'.65rem'}},'PRIMARY'):null),
+          React.createElement('div',{className:'ci-role'},c.role),
+          React.createElement('div',{className:'ci-detail'},'\u2709 ',c.email),
+          React.createElement('div',{className:'ci-detail'},'\u260E ',c.phone)
+        )
+      ))
+    ),
+    tab==='orgChart'&&React.createElement('div',{className:'card'},
+      React.createElement('div',{className:'card-header'},React.createElement('h3',null,'Organisation Structure')),
+      React.createElement(OrgChart,{contacts:company.contacts})
+    ),
+    tab==='orders'&&React.createElement('div',{className:'card'},
+      React.createElement('div',{className:'card-header'},React.createElement('h3',null,'Orders for '+company.name)),
+      React.createElement('div',{className:'card-body'},
+        companyOrders.length?React.createElement('table',null,
+          React.createElement('thead',null,React.createElement('tr',null,
+            React.createElement('th',null,'Order #'),React.createElement('th',null,'Items'),React.createElement('th',null,'Total'),React.createElement('th',null,'Status'),React.createElement('th',null,'Date'),React.createElement('th',null,'Warehouse')
+          )),
+          React.createElement('tbody',null,companyOrders.map(o=>React.createElement('tr',{key:o.id},
+            React.createElement('td',{style:{fontWeight:600,color:'var(--blue)'}},o.id),
+            React.createElement('td',null,o.items),
+            React.createElement('td',{style:{fontWeight:600}},o.total),
+            React.createElement('td',null,React.createElement('span',{className:'badge '+statusBadge(o.status)},fmt(o.status))),
+            React.createElement('td',{style:{color:'var(--text-secondary)'}},o.date),
+            React.createElement('td',null,React.createElement('span',{className:'badge badge-blue'},o.warehouse))
+          )))
+        ):React.createElement('div',{className:'empty-state'},React.createElement('p',null,'No orders yet'))
+      )
+    ),
+    tab==='invoices'&&React.createElement('div',{className:'card'},
+      React.createElement('div',{className:'card-header'},React.createElement('h3',null,'Invoices for '+company.name)),
+      React.createElement('div',{className:'card-body'},
+        companyInvoices.length?React.createElement('table',null,
+          React.createElement('thead',null,React.createElement('tr',null,
+            React.createElement('th',null,'Invoice #'),React.createElement('th',null,'Amount'),React.createElement('th',null,'Paid'),React.createElement('th',null,'Status'),React.createElement('th',null,'Due')
+          )),
+          React.createElement('tbody',null,companyInvoices.map(i=>React.createElement('tr',{key:i.id},
+            React.createElement('td',{style:{fontWeight:600,color:'var(--blue)'}},i.id),
+            React.createElement('td',{style:{fontWeight:600}},i.amount),
+            React.createElement('td',null,i.paid),
+            React.createElement('td',null,React.createElement('span',{className:'badge '+statusBadge(i.status)},fmt(i.status))),
+            React.createElement('td',{style:{color:i.status==='OVERDUE'?'var(--red)':'var(--text-secondary)'}},i.due)
+          )))
+        ):React.createElement('div',{className:'empty-state'},React.createElement('p',null,'No invoices yet'))
+      )
+    ),
+    tab==='notes'&&React.createElement('div',{className:'card'},
+      React.createElement('div',{className:'card-header'},React.createElement('h3',null,'Activity & Notes')),
+      React.createElement('div',{className:'timeline',style:{padding:20}},
+        company.notes.map((n,i)=>React.createElement('div',{key:i,className:'timeline-item'},
+          React.createElement('div',{className:'timeline-dot completed'}),
+          React.createElement('div',{className:'timeline-content'},
+            React.createElement('h4',null,n.text),
+            React.createElement('p',null,n.by,' \u2022 ',n.time)
+          )
+        ))
+      )
+    )
+  );
+}
+
+function CrmPage({lang,onToast}){
+  const t=useT(lang);
+  const [view,setView]=useState('companies');
+  const [showCreate,setShowCreate]=useState(false);
+  const [selectedCompany,setSelectedCompany]=useState(null);
+  const [search,setSearch]=useState('');
+  const [filterCountry,setFilterCountry]=useState('all');
+  const [filterTerms,setFilterTerms]=useState('all');
+  const [sortBy,setSortBy]=useState('name');
+  const [sortDir,setSortDir]=useState('asc');
+
+  const countries=[...new Set(COMPANIES.map(c=>c.country))];
+  const termsOpts=[...new Set(COMPANIES.map(c=>c.terms))];
+  const parseRev=(r)=>{const n=r.replace(/[^0-9.]/g,'');return parseFloat(n)||0;};
+  const filtered=COMPANIES.filter(c=>{
+    if(search&&!c.name.toLowerCase().includes(search.toLowerCase())&&!c.id.toLowerCase().includes(search.toLowerCase()))return false;
+    if(filterCountry!=='all'&&c.country!==filterCountry)return false;
+    if(filterTerms!=='all'&&c.terms!==filterTerms)return false;
+    return true;
+  }).sort((a,b)=>{
+    let va,vb;
+    if(sortBy==='name'){va=a.name;vb=b.name;}
+    else if(sortBy==='orders'){va=a.orders;vb=b.orders;}
+    else if(sortBy==='revenue'){va=parseRev(a.revenue);vb=parseRev(b.revenue);}
+    else if(sortBy==='contacts'){va=a.contacts.length;vb=b.contacts.length;}
+    else{va=a.name;vb=b.name;}
+    if(va<vb)return sortDir==='asc'?-1:1;
+    if(va>vb)return sortDir==='asc'?1:-1;
+    return 0;
+  });
+  const toggleSort=(col)=>{if(sortBy===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortBy(col);setSortDir('asc');}};
+  const sortIcon=(col)=>sortBy===col?(sortDir==='asc'?' \u2191':' \u2193'):'';
+
+  if(selectedCompany)return React.createElement(CompanyDetail,{company:selectedCompany,onBack:()=>setSelectedCompany(null),lang});
+
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{className:'stat-grid'},
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},'Active Companies'),React.createElement('div',{className:'stat-value'},COMPANIES.filter(c=>c.status==='Active').length)),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('pipelineValue')),React.createElement('div',{className:'stat-value'},'\u00A361,700')),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},'Total Contacts'),React.createElement('div',{className:'stat-value'},COMPANIES.reduce((a,c)=>a+c.contacts.length,0))),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('avgDealSize')),React.createElement('div',{className:'stat-value'},'\u00A312,340'))
+    ),
+    React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,flexWrap:'wrap',gap:12}},
+      React.createElement('div',{className:'entity-chips'},
+        React.createElement('span',{className:'entity-chip'+(view==='companies'?' active':''),onClick:()=>setView('companies')},'\u{1F3E2} Companies'),
+        React.createElement('span',{className:'entity-chip'+(view==='kanban'?' active':''),onClick:()=>setView('kanban')},'\u{1F5C2} Pipeline'),
+        React.createElement('span',{className:'entity-chip'+(view==='table'?' active':''),onClick:()=>setView('table')},'\u{1F4CB} Leads')
+      ),
+      React.createElement('button',{className:'btn btn-primary btn-sm',onClick:()=>setShowCreate(true)},t('addLead'))
+    ),
+    view==='companies'&&React.createElement(React.Fragment,null,
+      React.createElement('div',{className:'crm-filters'},
+        React.createElement('input',{className:'crm-filter-input',placeholder:'Search companies...',value:search,onChange:e=>setSearch(e.target.value)}),
+        React.createElement('select',{className:'crm-filter-select',value:filterCountry,onChange:e=>setFilterCountry(e.target.value)},
+          React.createElement('option',{value:'all'},'All Countries'),
+          countries.map(c=>React.createElement('option',{key:c,value:c},c))
+        ),
+        React.createElement('select',{className:'crm-filter-select',value:filterTerms,onChange:e=>setFilterTerms(e.target.value)},
+          React.createElement('option',{value:'all'},'All Terms'),
+          termsOpts.map(tt=>React.createElement('option',{key:tt,value:tt},tt))
+        ),
+        React.createElement('span',{style:{fontSize:'.8rem',color:'var(--text-secondary)',marginLeft:'auto'}},filtered.length+' of '+COMPANIES.length+' companies')
+      ),
+      React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-body'},
+          React.createElement('table',null,
+            React.createElement('thead',null,React.createElement('tr',null,
+              React.createElement('th',{style:{cursor:'pointer'},onClick:()=>toggleSort('name')},'Company'+sortIcon('name')),
+              React.createElement('th',null,'Country'),
+              React.createElement('th',null,'Primary Contact'),
+              React.createElement('th',{style:{cursor:'pointer'},onClick:()=>toggleSort('revenue')},'Revenue'+sortIcon('revenue')),
+              React.createElement('th',{style:{cursor:'pointer',textAlign:'center'},onClick:()=>toggleSort('orders')},'Orders'+sortIcon('orders')),
+              React.createElement('th',{style:{cursor:'pointer',textAlign:'center'},onClick:()=>toggleSort('contacts')},'Contacts'+sortIcon('contacts')),
+              React.createElement('th',null,'Terms'),
+              React.createElement('th',null,'Credit Limit'),
+              React.createElement('th',null,'Status')
+            )),
+            React.createElement('tbody',null,
+              filtered.map(c=>{
+                const primary=c.contacts.find(ct=>ct.isPrimary)||c.contacts[0];
+                return React.createElement('tr',{key:c.id,className:'clickable-row',onClick:()=>setSelectedCompany(c)},
+                  React.createElement('td',{style:{fontWeight:700}},c.name),
+                  React.createElement('td',null,c.country),
+                  React.createElement('td',null,React.createElement('div',null,React.createElement('div',{style:{fontWeight:600,fontSize:'.85rem'}},primary.name),React.createElement('div',{style:{fontSize:'.75rem',color:'var(--text-secondary)'}},primary.role))),
+                  React.createElement('td',{style:{fontWeight:600}},c.revenue),
+                  React.createElement('td',{style:{textAlign:'center'}},c.orders),
+                  React.createElement('td',{style:{textAlign:'center'}},c.contacts.length),
+                  React.createElement('td',null,React.createElement('span',{className:'badge badge-blue'},c.terms)),
+                  React.createElement('td',null,c.creditLimit),
+                  React.createElement('td',null,React.createElement('span',{className:'badge '+(c.status==='Active'?'badge-green':'badge-gray')},c.status))
+                );
+              })
+            )
+          )
+        )
+      )
+    ),
+    view==='kanban'&&React.createElement(KanbanBoard,{leads:LEADS,lang}),
+    view==='table'&&React.createElement('div',{className:'card'},
+      React.createElement('div',{className:'card-body'},
+        React.createElement('table',null,
+          React.createElement('thead',null,React.createElement('tr',null,
+            React.createElement('th',null,t('company')),React.createElement('th',null,t('contact')),React.createElement('th',null,t('stage')),React.createElement('th',null,t('value')),React.createElement('th',null,t('score')),React.createElement('th',null,t('lastContact'))
+          )),
+          React.createElement('tbody',null,
+            LEADS.map(l=>React.createElement('tr',{key:l.name},
+              React.createElement('td',{style:{fontWeight:600}},l.name),
+              React.createElement('td',null,l.contact),
+              React.createElement('td',null,React.createElement('span',{className:'badge '+statusBadge(l.stage)},fmt(l.stage))),
+              React.createElement('td',{style:{fontWeight:600}},l.value),
+              React.createElement('td',null,React.createElement('div',{style:{display:'flex',alignItems:'center',gap:8}},
+                React.createElement('div',{className:'progress-bar',style:{width:60}},React.createElement('div',{className:'fill '+(l.score>70?'fill-green':l.score>40?'fill-orange':'fill-red'),style:{width:l.score+'%'}})),
+                React.createElement('span',{style:{fontSize:'.8rem',fontWeight:600}},l.score)
+              )),
+              React.createElement('td',{style:{color:'var(--text-secondary)',fontSize:'.85rem'}},l.lastContact)
+            ))
+          )
+        )
+      )
+    ),
+    showCreate&&React.createElement(CreateFormModal,{title:t('newLeadTitle'),fields:FORM_CONFIGS.lead(t),lang,onClose:()=>setShowCreate(false),onSubmit:(v)=>{setShowCreate(false);onToast('Lead '+t('created'));}})
+  );
+}
+
+function ShipmentsPage({lang,onToast}){
+  const t=useT(lang);
+  const [showCreate,setShowCreate]=useState(false);
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{className:'stat-grid'},
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('inTransit')),React.createElement('div',{className:'stat-value'},'12')),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('deliveredToday')),React.createElement('div',{className:'stat-value'},'5')),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('avgTransitTime')),React.createElement('div',{className:'stat-value'},'3.2 '+t('days'))),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('deliveryRate')),React.createElement('div',{className:'stat-value'},'97.8%'))
+    ),
+    React.createElement('div',{className:'card'},
+      React.createElement('div',{className:'card-header'},React.createElement('h3',null,t('shipment')+'s'),React.createElement('button',{className:'btn btn-primary btn-sm',onClick:()=>setShowCreate(true)},t('createShipment'))),
+      React.createElement('div',{className:'card-body'},
+        React.createElement('table',null,
+          React.createElement('thead',null,React.createElement('tr',null,
+            React.createElement('th',null,t('shipment')),React.createElement('th',null,t('order')),React.createElement('th',null,t('carrier')),React.createElement('th',null,t('tracking')),React.createElement('th',null,t('route')),React.createElement('th',null,t('status')),React.createElement('th',null,t('eta'))
+          )),
+          React.createElement('tbody',null,
+            SHIPMENTS.map(s=>React.createElement('tr',{key:s.id},
+              React.createElement('td',{style:{fontWeight:600}},s.id),
+              React.createElement('td',{style:{fontFamily:'monospace',fontSize:'.8rem'}},s.order),
+              React.createElement('td',null,s.carrier),
+              React.createElement('td',{style:{fontFamily:'monospace',fontSize:'.8rem',color:'var(--blue)'}},s.tracking),
+              React.createElement('td',null,s.origin,' \u2192 ',s.dest),
+              React.createElement('td',null,React.createElement('span',{className:'badge '+statusBadge(s.status)},fmt(s.status))),
+              React.createElement('td',null,s.eta)
+            ))
+          )
+        )
+      )
+    ),
+    showCreate&&React.createElement(CreateFormModal,{title:t('newShipmentTitle'),fields:FORM_CONFIGS.shipment(t),lang,onClose:()=>setShowCreate(false),onSubmit:(v)=>{setShowCreate(false);onToast(t('shipment')+' '+t('created'));}})
+  );
+}
+
+function ReportsPage({lang}){
+  const t=useT(lang);
+  const maxR=Math.max(...REVENUE_DATA.map(d=>d.value));
+  const colors=['#ef4444','#f97316','#eab308','#22c55e','#3b82f6','#8b5cf6'];
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{style:{padding:'20px 0'}},
+      React.createElement('div',{className:'kpi-row'},
+        React.createElement('div',{className:'kpi-pill'},React.createElement('div',{className:'kpi-val'},'\u00A389,450'),React.createElement('div',{className:'kpi-label'},t('monthlyRevenue')),React.createElement('div',{className:'kpi-trend',style:{color:'#22c55e'}},'+12.3%')),
+        React.createElement('div',{className:'kpi-pill'},React.createElement('div',{className:'kpi-val'},'34.2%'),React.createElement('div',{className:'kpi-label'},t('grossMargin')),React.createElement('div',{className:'kpi-trend',style:{color:'#22c55e'}},'+2.1pp')),
+        React.createElement('div',{className:'kpi-pill'},React.createElement('div',{className:'kpi-val'},'97.8%'),React.createElement('div',{className:'kpi-label'},t('orderFillRate'))),
+        React.createElement('div',{className:'kpi-pill'},React.createElement('div',{className:'kpi-val'},'1.4 days'),React.createElement('div',{className:'kpi-label'},t('avgDispatchTime')))
+      ),
+      React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,t('revenueChart'))),
+        React.createElement('div',{className:'chart-container'},
+          React.createElement('div',{className:'chart-bar-group',style:{height:200}},
+            REVENUE_DATA.map((d,i)=>React.createElement('div',{key:d.month,className:'chart-bar',style:{height:(d.value/maxR*100)+'%',background:colors[i]}},
+              React.createElement('div',{className:'tooltip'},'\u00A3'+(d.value/1000).toFixed(0)+'k \u2022 '+d.month)
+            ))
+          ),
+          React.createElement('div',{className:'chart-labels'},REVENUE_DATA.map(d=>React.createElement('span',{key:d.month},d.month)))
+        )
+      ),
+      React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,t('smartAlerts'))),
+        React.createElement('div',{className:'card-body'},
+          [{msg:'Reorder Alert: APL-SCR-15PM-OEM below safety stock (45 units, min: 50)',type:'error'},
+           {msg:'Demand Spike: iPhone 15 PM Battery orders up 340% vs last week',type:'warning'},
+           {msg:'Stock Aging: 23 units of APL-SCR-14P-OEM in SZ-MAIN >90 days',type:'warning'},
+           {msg:'Margin Alert: Samsung S24 screens margin dropped to 18% (target: 25%)',type:'error'},
+           {msg:'Best Seller: APL-BAT-15PM - 340 units sold this month',type:'success'}
+          ].map((a,i)=>React.createElement('div',{key:i,style:{padding:'12px',marginBottom:'8px',borderRadius:'6px',background:a.type==='error'?'#fee2e2':a.type==='warning'?'#fef3c7':'#d1fae5',borderLeft:'4px solid '+(a.type==='error'?'#dc2626':a.type==='warning'?'#d97706':'#059669'),color:a.type==='error'?'#991b1b':a.type==='warning'?'#92400e':'#065f46',fontSize:'.9rem'}},a.msg))
+        )
+      ),
+      React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,t('demandForecast'))),
+        React.createElement('div',{className:'card-body'},
+          React.createElement('table',null,
+            React.createElement('thead',null,React.createElement('tr',null,React.createElement('th',null,t('product')),React.createElement('th',null,t('currentStock')),React.createElement('th',null,'30-Day Forecast'),React.createElement('th',null,'Reorder Point'),React.createElement('th',null,'Recommended Order'),React.createElement('th',null,t('status')))),
+            React.createElement('tbody',null,
+              [{p:'iPhone 15 PM Screen OEM',cs:45,f:62,rp:50,ro:25,s:'Below Reorder',c:'#fee2e2',tc:'#991b1b'},
+               {p:'iPhone 15 PM Battery',cs:200,f:180,rp:100,ro:0,s:'OK',c:'#d1fae5',tc:'#065f46'},
+               {p:'iPhone 15 USB-C Port',cs:300,f:245,rp:150,ro:0,s:'OK',c:'#d1fae5',tc:'#065f46'},
+               {p:'iPhone 14 PM Screen OEM',cs:62,f:85,rp:60,ro:30,s:'Order Soon',c:'#fef3c7',tc:'#92400e'},
+               {p:'Samsung S24 Ultra Screen',cs:28,f:40,rp:30,ro:15,s:'Below Reorder',c:'#fee2e2',tc:'#991b1b'},
+               {p:'iPad Pro 12.9 Screen',cs:15,f:22,rp:20,ro:10,s:'Critical',c:'#fee2e2',tc:'#991b1b'}
+              ].map(r=>React.createElement('tr',{key:r.p},
+                React.createElement('td',{style:{fontWeight:600}},r.p),
+                React.createElement('td',null,r.cs),
+                React.createElement('td',null,r.f),
+                React.createElement('td',null,r.rp),
+                React.createElement('td',null,r.ro),
+                React.createElement('td',{style:{background:r.c,color:r.tc,padding:'4px 8px',borderRadius:'4px',fontWeight:500,fontSize:'.85rem'}},r.s)
+              ))
+            )
+          )
+        )
+      ),
+      React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,t('topCustomers'))),
+        React.createElement('div',{className:'card-body'},
+          React.createElement('table',null,
+            React.createElement('thead',null,React.createElement('tr',null,React.createElement('th',null,'Rank'),React.createElement('th',null,t('company')),React.createElement('th',null,t('revenue')),React.createElement('th',null,t('orders')),React.createElement('th',null,'Avg Order Value'),React.createElement('th',null,'Trend'))),
+            React.createElement('tbody',null,
+              [{r:1,c:'MobilePartsNL',rev:'\u20AC210,400',o:68,aov:'\u20AC3,094',t:'\u2191'},
+               {r:2,c:'TechFix London',rev:'\u00A3148,500',o:42,aov:'\u00A33,536',t:'\u2191'},
+               {r:3,c:'CellParts Direct',rev:'\u00A398,400',o:38,aov:'\u00A32,589',t:'\u2192'},
+               {r:4,c:'PhoneDoc Berlin',rev:'\u20AC86,250',o:28,aov:'\u20AC3,080',t:'\u2191'},
+               {r:5,c:'Shenzhen iRepair',rev:'\u00A5534,000',o:15,aov:'\u00A535,600',t:'\u2193'}
+              ].map(r=>React.createElement('tr',{key:r.r},
+                React.createElement('td',{style:{fontWeight:600}},r.r),
+                React.createElement('td',{style:{fontWeight:600}},r.c),
+                React.createElement('td',null,r.rev),
+                React.createElement('td',null,r.o),
+                React.createElement('td',null,r.aov),
+                React.createElement('td',{style:{fontSize:'1.2rem',color:r.t==='\u2191'?'#059669':r.t==='\u2193'?'#dc2626':'#6b7280'}},r.t)
+              ))
+            )
+          )
+        )
+      ),
+      React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,t('marginAnalysis'))),
+        React.createElement('div',{className:'card-body'},
+          React.createElement('table',null,
+            React.createElement('thead',null,React.createElement('tr',null,React.createElement('th',null,t('category')),React.createElement('th',null,t('revenue')),React.createElement('th',null,'Cost'),React.createElement('th',null,'Margin %'),React.createElement('th',null,'vs Target'))),
+            React.createElement('tbody',null,
+              [{cat:'Screens',rev:'\u00A345,200',cost:'\u00A328,600',margin:'36.7%',vsTarget:'+6.7%',c:'#d1fae5',tc:'#065f46'},
+               {cat:'Batteries',rev:'\u00A312,800',cost:'\u00A37,900',margin:'38.3%',vsTarget:'+8.3%',c:'#d1fae5',tc:'#065f46'},
+               {cat:'Cameras',rev:'\u00A318,400',cost:'\u00A313,200',margin:'28.3%',vsTarget:'-1.7%',c:'#fee2e2',tc:'#991b1b'},
+               {cat:'Charging',rev:'\u00A38,600',cost:'\u00A35,100',margin:'40.7%',vsTarget:'+10.7%',c:'#d1fae5',tc:'#065f46'},
+               {cat:'Housing',rev:'\u00A34,450',cost:'\u00A33,200',margin:'28.1%',vsTarget:'-1.9%',c:'#fee2e2',tc:'#991b1b'}
+              ].map(r=>React.createElement('tr',{key:r.cat},
+                React.createElement('td',{style:{fontWeight:600}},r.cat),
+                React.createElement('td',null,r.rev),
+                React.createElement('td',null,r.cost),
+                React.createElement('td',null,r.margin),
+                React.createElement('td',{style:{background:r.c,color:r.tc,padding:'4px 8px',borderRadius:'4px',fontWeight:500,fontSize:'.85rem'}},r.vsTarget)
+              ))
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
+function AutomationPage({lang}){
+  const t=useT(lang);
+  const [rules,setRules]=useState({
+    autoAllocate:true,autoPickList:true,autoCarrier:true,autoInvoice:true,
+    autoReminder:true,autoApproveRma:false
+  });
+  const toggleRule=(key)=>{setRules({...rules,[key]:!rules[key]});};
+  const pipelineStages=[
+    {name:'Order Received',count:8,color:'#3b82f6'},
+    {name:'Stock Allocated',count:6,color:'#3b82f6'},
+    {name:'Pick List Created',count:5,color:'#3b82f6'},
+    {name:'Packed',count:3,color:'#22c55e'},
+    {name:'Shipped',count:2,color:'#22c55e'}
+  ];
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{style:{padding:'20px 0'}},
+      React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,t('activeWorkflows'))),
+        React.createElement('div',{className:'card-body'}),
+        React.createElement('div',{style:{padding:'16px'}},
+          React.createElement('h4',{style:{marginBottom:'16px',fontSize:'.95rem',fontWeight:600}},'Order \u2192 Pick \u2192 Pack \u2192 Ship'),
+          React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'24px',gap:'12px'}},
+            pipelineStages.map((s,i)=>React.createElement('div',{key:s.name,style:{flex:1,textAlign:'center'}},
+              React.createElement('div',{style:{width:'48px',height:'48px',borderRadius:'50%',background:s.color,color:'white',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:600,fontSize:'.9rem',margin:'0 auto',marginBottom:'8px'}},s.count),
+              React.createElement('div',{style:{fontSize:'.75rem',color:'var(--text-secondary)',lineHeight:'1.3'}},s.name),
+              i<pipelineStages.length-1&&React.createElement('div',{style:{position:'absolute',width:'20px',height:'2px',background:'#d1d5db',marginLeft:'-50px',marginTop:'-30px'}})
+            ))
+          ),
+          React.createElement('h4',{style:{marginBottom:'16px',fontSize:'.95rem',fontWeight:600,marginTop:'24px'}},'Invoice Automation'),
+          React.createElement('div',{style:{padding:'12px',background:'var(--gray-50)',borderRadius:'6px',marginBottom:'16px'}},
+            React.createElement('div',null,'\u{1F9F0} Order Shipped \u2192 Invoice Generated \u2192 Payment Reminder (Net 30) \u2192 Payment Received \u2192 Reconciled'),
+            React.createElement('div',{style:{marginTop:'8px',fontSize:'.85rem',color:'var(--text-secondary)'}},React.createElement('span',{style:{marginRight:'16px'}},'\ud83d\udccb 12 invoices in pipeline'),React.createElement('span',{style:{color:'#dc2626'}},'\u26a0 3 overdue'))
+          ),
+          React.createElement('h4',{style:{marginBottom:'16px',fontSize:'.95rem',fontWeight:600,marginTop:'24px'}},'RMA Processing'),
+          React.createElement('div',{style:{padding:'12px',background:'var(--gray-50)',borderRadius:'6px'}},
+            React.createElement('div',null,'RMA Submitted \u2192 QC Review \u2192 Approved \u2192 Replacement Picked \u2192 Shipped \u2192 Closed'),
+            React.createElement('div',{style:{marginTop:'8px',fontSize:'.85rem',color:'var(--text-secondary)'}},'\ud83d\udce6 4 active RMAs')
+          )
+        )
+      ),
+      React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,t('recentAutomations'))),
+        React.createElement('div',{className:'card-body'},
+          React.createElement('table',null,
+            React.createElement('thead',null,React.createElement('tr',null,React.createElement('th',null,t('action')),React.createElement('th',null,'Time'))),
+            React.createElement('tbody',null,
+              [
+                {action:'Auto-allocated stock for ORD-2026-000151',time:'2 min ago'},
+                {action:'Pick list PL-2026-0045 generated for AMS-HUB',time:'5 min ago'},
+                {action:'Invoice UK-INV-2026-000092 auto-generated',time:'15 min ago'},
+                {action:'Payment reminder sent to CellParts Direct',time:'1 hour ago'},
+                {action:'RMA-2026-0019 auto-approved (under \u00A3500)',time:'2 hours ago'},
+                {action:'Stock transfer SZ\u2192AMS triggered (APL-BAT-15PM below threshold)',time:'3 hours ago'},
+                {action:'Carrier auto-selected: DHL Express for DE delivery',time:'4 hours ago'},
+                {action:'Order ORD-2026-000149 auto-confirmed (pre-approved customer)',time:'5 hours ago'}
+              ].map(r=>React.createElement('tr',{key:r.action},
+                React.createElement('td',{style:{fontWeight:500}},r.action),
+                React.createElement('td',{style:{color:'var(--text-secondary)',fontSize:'.9rem'}},r.time)
+              ))
+            )
+          )
+        )
+      ),
+      React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,t('automationRules'))),
+        React.createElement('div',{className:'card-body'}),
+        React.createElement('div',{style:{padding:'16px'}},
+          [
+            {key:'autoAllocate',label:'Auto-allocate stock on order confirmation'},
+            {key:'autoPickList',label:'Auto-generate pick list when allocated'},
+            {key:'autoCarrier',label:'Auto-select cheapest carrier by destination'},
+            {key:'autoInvoice',label:'Auto-send invoice on shipment'},
+            {key:'autoReminder',label:'Auto-send payment reminder at Net+25 days'},
+            {key:'autoApproveRma',label:'Auto-approve RMA under \u00A3500'}
+          ].map(r=>React.createElement('div',{key:r.key,style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 0',borderBottom:'1px solid var(--border-color)'}},
+            React.createElement('label',{style:{flex:1,cursor:'pointer'}},r.label),
+            React.createElement('input',{type:'checkbox',checked:rules[r.key],onChange:()=>toggleRule(r.key),style:{width:'18px',height:'18px',cursor:'pointer'}})
+          ))
+        )
+      )
+    )
+  );
+}
+
+function SettingsPage({lang,onToast}){
+  const t=useT(lang);
+  const [tab,setTab]=useState('users');
+  const [showCreate,setShowCreate]=useState(false);
+  const users=[
+    {name:'Admin Super',email:'admin@aplong.com',role:'SUPER_ADMIN',active:true,twoFa:true,lastLogin:'2026-03-28 09:15'},
+    {name:'Sarah Chen',email:'sarah.chen@aplong.com',role:'WAREHOUSE_MANAGER',active:true,twoFa:true,lastLogin:'2026-03-28 08:30'},
+    {name:'Jan de Vries',email:'jan.devries@aplong.com',role:'WAREHOUSE_OPERATIVE',active:true,twoFa:false,lastLogin:'2026-03-28 07:00'},
+    {name:'James Wilson',email:'james.wilson@aplong.com',role:'SALES_MANAGER',active:true,twoFa:true,lastLogin:'2026-03-27 17:45'},
+    {name:'Emma Thompson',email:'emma.thompson@aplong.com',role:'SALES_AGENT',active:true,twoFa:false,lastLogin:'2026-03-28 10:00'},
+    {name:'Li Wei',email:'li.wei@aplong.com',role:'FINANCE',active:true,twoFa:true,lastLogin:'2026-03-27 14:20'},
+    {name:'Maria Garcia',email:'maria.garcia@aplong.com',role:'SUPPORT_AGENT',active:true,twoFa:false,lastLogin:'2026-03-28 09:00'},
+  ];
+  const taxRates=[
+    {country:'\u{1F1EC}\u{1F1E7} United Kingdom',type:'VAT',rate:'20%',reg:'GB 123 4567 89',effective:'2011-01-04',status:'Active'},
+    {country:'\u{1F1F3}\u{1F1F1} Netherlands',type:'BTW (VAT)',rate:'21%',reg:'NL 8234.56.789.B01',effective:'2012-10-01',status:'Active'},
+    {country:'\u{1F1E8}\u{1F1F3} China',type:'VAT',rate:'13%',reg:'91440300MA5G...',effective:'2019-04-01',status:'Active'},
+    {country:'\u{1F1EA}\u{1F1FA} EU (B2B)',type:'Reverse Charge',rate:'0%',reg:'N/A',effective:'2021-07-01',status:'Active'},
+    {country:'\u{1F1EC}\u{1F1E7} UK (Export)',type:'Zero-rated',rate:'0%',reg:'GB 123 4567 89',effective:'2021-01-01',status:'Active'},
+  ];
+  const exchangeRates=[
+    {from:'GBP',to:'EUR',rate:'1.1628',inverse:'0.8600',updated:'2026-03-28 06:00',source:'ECB'},
+    {from:'GBP',to:'CNY',rate:'9.1845',inverse:'0.1089',updated:'2026-03-28 06:00',source:'PBOC'},
+    {from:'GBP',to:'USD',rate:'1.2934',inverse:'0.7732',updated:'2026-03-28 06:00',source:'Fed'},
+    {from:'EUR',to:'CNY',rate:'7.8990',inverse:'0.1266',updated:'2026-03-28 06:00',source:'ECB'},
+    {from:'EUR',to:'USD',rate:'1.1124',inverse:'0.8990',updated:'2026-03-28 06:00',source:'ECB'},
+  ];
+  const carriersData=[
+    {name:'DHL Express',type:'Express',regions:'Global',apiStatus:'Connected',trackingUrl:'dhl.com',avgDays:'2-4',active:true},
+    {name:'PostNL',type:'Standard',regions:'EU, NL domestic',apiStatus:'Connected',trackingUrl:'postnl.nl',avgDays:'3-5',active:true},
+    {name:'SF Express',type:'Express',regions:'China, Asia-Pacific',apiStatus:'Connected',trackingUrl:'sf-express.com',avgDays:'2-3',active:true},
+    {name:'FedEx',type:'Express',regions:'Global',apiStatus:'API Key Expired',trackingUrl:'fedex.com',avgDays:'2-5',active:false},
+    {name:'Royal Mail',type:'Standard',regions:'UK domestic',apiStatus:'Connected',trackingUrl:'royalmail.com',avgDays:'1-3',active:true},
+    {name:'UPS',type:'Express',regions:'Global',apiStatus:'Not Configured',trackingUrl:'ups.com',avgDays:'2-4',active:false},
+  ];
+  const configItems=[
+    {key:'Company Name',value:'Aplong Ltd',desc:'Legal company name'},
+    {key:'Default Currency',value:'GBP',desc:'Primary reporting currency'},
+    {key:'Invoice Prefix (UK)',value:'UK-INV',desc:'Auto-generated invoice prefix'},
+    {key:'Invoice Prefix (NL)',value:'NL-INV',desc:'Auto-generated invoice prefix'},
+    {key:'Invoice Prefix (CN)',value:'CN-INV',desc:'Auto-generated invoice prefix'},
+    {key:'Payment Terms (Default)',value:'Net 30',desc:'Default payment terms for new customers'},
+    {key:'Credit Limit (Default)',value:'\u00A310,000',desc:'Default credit limit for new accounts'},
+    {key:'Low Stock Threshold',value:'20 units',desc:'Alert when warehouse stock falls below'},
+    {key:'SLA Target (RMA)',value:'96 hours',desc:'Maximum RMA resolution time'},
+    {key:'Session Timeout',value:'8 hours',desc:'Auto-logout after inactivity'},
+    {key:'2FA Enforcement',value:'Admins & Finance',desc:'Roles requiring two-factor auth'},
+    {key:'Email From Address',value:'noreply@aplong.com',desc:'Sender address for system emails'},
+  ];
+  const webhooksData=[
+    {url:'https://erp.aplong.com/api/webhook',events:'order.created, order.updated',status:'Active',lastDelivery:'2026-03-28 09:15',success:'98.5%'},
+    {url:'https://accounting.aplong.com/hook',events:'invoice.created, payment.received',status:'Active',lastDelivery:'2026-03-28 08:45',success:'99.2%'},
+    {url:'https://warehouse.aplong.com/notify',events:'shipment.dispatched, stock.low',status:'Active',lastDelivery:'2026-03-27 16:30',success:'100%'},
+    {url:'https://old-system.example.com/v1',events:'order.created',status:'Disabled',lastDelivery:'2026-02-15 11:00',success:'45.2%'},
+  ];
+  const auditLog=[
+    {time:'2026-03-28 10:02',user:'Admin Super',action:'Updated exchange rates',target:'System Config',ip:'192.168.1.10'},
+    {time:'2026-03-28 09:15',user:'Sarah Chen',action:'Created order ORD-2026-000147',target:'Orders',ip:'10.0.0.45'},
+    {time:'2026-03-28 08:30',user:'James Wilson',action:'Moved lead to Negotiation',target:'CRM',ip:'10.0.0.22'},
+    {time:'2026-03-27 17:00',user:'Li Wei',action:'Sent invoice NL-INV-2026-000156',target:'Invoices',ip:'10.0.0.18'},
+    {time:'2026-03-27 16:30',user:'Admin Super',action:'Added carrier SF Express',target:'Settings',ip:'192.168.1.10'},
+    {time:'2026-03-27 14:20',user:'Li Wei',action:'Recorded payment PAY-4521',target:'Payments',ip:'10.0.0.18'},
+    {time:'2026-03-27 11:00',user:'Emma Thompson',action:'Created RMA-2026-0034',target:'RMA',ip:'10.0.0.33'},
+    {time:'2026-03-26 09:45',user:'Jan de Vries',action:'Stock transfer SZ\u2192AMS 50 units',target:'Products',ip:'10.0.0.52'},
+  ];
+  const tabLabels={users:'Users',config:'General',tax:'Tax Rates',exchange:'Exchange Rates',carriers:'Carriers',webhooks:'Webhooks',audit:'Audit Log'};
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{className:'tab-bar'},
+      Object.entries(tabLabels).map(([k,v])=>
+        React.createElement('span',{key:k,className:'tab'+(tab===k?' active':''),onClick:()=>setTab(k)},v)
+      )
+    ),
+    React.createElement('div',{style:{padding:'20px 0'}},
+      tab==='users'&&React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,t('staffUsers')+' ('+users.length+')'),React.createElement('button',{className:'btn btn-primary btn-sm',onClick:()=>setShowCreate(true)},t('inviteUser'))),
+        React.createElement('div',{className:'card-body'},
+          React.createElement('table',null,
+            React.createElement('thead',null,React.createElement('tr',null,
+              React.createElement('th',null,t('name')),React.createElement('th',null,t('email')),React.createElement('th',null,t('role')),React.createElement('th',null,'2FA'),React.createElement('th',null,'Last Login'),React.createElement('th',null,t('actions'))
+            )),
+            React.createElement('tbody',null,
+              users.map(u=>React.createElement('tr',{key:u.email},
+                React.createElement('td',{style:{fontWeight:600}},u.name),
+                React.createElement('td',{style:{color:'var(--text-secondary)'}},u.email),
+                React.createElement('td',null,React.createElement('span',{className:'badge badge-blue'},fmt(u.role))),
+                React.createElement('td',null,React.createElement('span',{className:'badge '+(u.twoFa?'badge-green':'badge-orange')},u.twoFa?'Enabled':'Disabled')),
+                React.createElement('td',{style:{color:'var(--text-secondary)',fontSize:'.85rem'}},u.lastLogin),
+                React.createElement('td',null,
+                  React.createElement('button',{className:'btn btn-outline btn-sm',style:{marginRight:4},onClick:()=>onToast(u.name+' updated')},'Edit'),
+                  React.createElement('button',{className:'btn btn-outline btn-sm',onClick:()=>onToast('2FA '+(u.twoFa?'disabled':'enabled')+' for '+u.name)},u.twoFa?'Disable 2FA':'Enable 2FA')
+                )
+              ))
+            )
+          )
+        )
+      ),
+      tab==='config'&&React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,'General Configuration'),React.createElement('button',{className:'btn btn-primary btn-sm',onClick:()=>onToast('Configuration saved')},'\u{1F4BE} Save Changes')),
+        React.createElement('div',{className:'card-body'},
+          React.createElement('table',null,
+            React.createElement('thead',null,React.createElement('tr',null,
+              React.createElement('th',null,'Setting'),React.createElement('th',null,'Value'),React.createElement('th',null,'Description')
+            )),
+            React.createElement('tbody',null,
+              configItems.map(c=>React.createElement('tr',{key:c.key},
+                React.createElement('td',{style:{fontWeight:600}},c.key),
+                React.createElement('td',null,React.createElement('span',{style:{fontFamily:'monospace',background:'var(--gray-100)',padding:'2px 8px',borderRadius:4,fontSize:'.85rem'}},c.value)),
+                React.createElement('td',{style:{color:'var(--text-secondary)',fontSize:'.85rem'}},c.desc)
+              ))
+            )
+          )
+        )
+      ),
+      tab==='tax'&&React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,'Tax Rates & VAT Registration'),React.createElement('button',{className:'btn btn-primary btn-sm',onClick:()=>onToast('Tax rate added')},'+ Add Tax Rate')),
+        React.createElement('div',{className:'card-body'},
+          React.createElement('table',null,
+            React.createElement('thead',null,React.createElement('tr',null,
+              React.createElement('th',null,'Country'),React.createElement('th',null,'Tax Type'),React.createElement('th',null,'Rate'),React.createElement('th',null,'Registration #'),React.createElement('th',null,'Effective'),React.createElement('th',null,'Status')
+            )),
+            React.createElement('tbody',null,
+              taxRates.map(r=>React.createElement('tr',{key:r.country+r.type},
+                React.createElement('td',{style:{fontWeight:600}},r.country),
+                React.createElement('td',null,r.type),
+                React.createElement('td',null,React.createElement('span',{style:{fontWeight:700,fontSize:'1rem'}},r.rate)),
+                React.createElement('td',{style:{fontFamily:'monospace',fontSize:'.8rem',color:'var(--text-secondary)'}},r.reg),
+                React.createElement('td',{style:{color:'var(--text-secondary)'}},r.effective),
+                React.createElement('td',null,React.createElement('span',{className:'badge badge-green'},r.status))
+              ))
+            )
+          )
+        )
+      ),
+      tab==='exchange'&&React.createElement(React.Fragment,null,
+        React.createElement('div',{className:'kpi-row'},
+          React.createElement('div',{className:'kpi-pill'},React.createElement('div',{className:'kpi-val'},'1.16'),React.createElement('div',{className:'kpi-label'},'GBP \u2192 EUR')),
+          React.createElement('div',{className:'kpi-pill'},React.createElement('div',{className:'kpi-val'},'9.18'),React.createElement('div',{className:'kpi-label'},'GBP \u2192 CNY')),
+          React.createElement('div',{className:'kpi-pill'},React.createElement('div',{className:'kpi-val'},'1.29'),React.createElement('div',{className:'kpi-label'},'GBP \u2192 USD')),
+          React.createElement('div',{className:'kpi-pill'},React.createElement('div',{className:'kpi-val',style:{color:'var(--green)'}},'\u2713'),React.createElement('div',{className:'kpi-label'},'Auto-updated 6AM'))
+        ),
+        React.createElement('div',{className:'card'},
+          React.createElement('div',{className:'card-header'},React.createElement('h3',null,'Live Exchange Rates'),React.createElement('button',{className:'btn btn-outline btn-sm',onClick:()=>onToast('Exchange rates refreshed')},'\u{1F504} Refresh Now')),
+          React.createElement('div',{className:'card-body'},
+            React.createElement('table',null,
+              React.createElement('thead',null,React.createElement('tr',null,
+                React.createElement('th',null,'From'),React.createElement('th',null,'To'),React.createElement('th',null,'Rate'),React.createElement('th',null,'Inverse'),React.createElement('th',null,'Last Updated'),React.createElement('th',null,'Source')
+              )),
+              React.createElement('tbody',null,
+                exchangeRates.map(r=>React.createElement('tr',{key:r.from+r.to},
+                  React.createElement('td',null,React.createElement('span',{className:'badge badge-blue'},r.from)),
+                  React.createElement('td',null,React.createElement('span',{className:'badge badge-purple'},r.to)),
+                  React.createElement('td',{style:{fontWeight:700,fontSize:'1.05rem',fontFamily:'monospace'}},r.rate),
+                  React.createElement('td',{style:{fontFamily:'monospace',color:'var(--text-secondary)'}},r.inverse),
+                  React.createElement('td',{style:{color:'var(--text-secondary)',fontSize:'.85rem'}},r.updated),
+                  React.createElement('td',null,React.createElement('span',{className:'badge badge-gray'},r.source))
+                ))
+              )
+            )
+          )
+        )
+      ),
+      tab==='carriers'&&React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,'Shipping Carriers'),React.createElement('button',{className:'btn btn-primary btn-sm',onClick:()=>onToast('Carrier added')},'+ Add Carrier')),
+        React.createElement('div',{className:'card-body'},
+          React.createElement('table',null,
+            React.createElement('thead',null,React.createElement('tr',null,
+              React.createElement('th',null,'Carrier'),React.createElement('th',null,'Type'),React.createElement('th',null,'Regions'),React.createElement('th',null,'Avg Transit'),React.createElement('th',null,'API Status'),React.createElement('th',null,'Actions')
+            )),
+            React.createElement('tbody',null,
+              carriersData.map(c=>React.createElement('tr',{key:c.name},
+                React.createElement('td',{style:{fontWeight:600}},c.name),
+                React.createElement('td',null,React.createElement('span',{className:'badge '+(c.type==='Express'?'badge-purple':'badge-blue')},c.type)),
+                React.createElement('td',null,c.regions),
+                React.createElement('td',null,c.avgDays+' days'),
+                React.createElement('td',null,React.createElement('span',{className:'badge '+(c.apiStatus==='Connected'?'badge-green':c.apiStatus.includes('Expired')?'badge-red':'badge-gray')},c.apiStatus)),
+                React.createElement('td',null,
+                  React.createElement('button',{className:'btn btn-outline btn-sm',style:{marginRight:4},onClick:()=>onToast(c.name+' configured')},'Configure'),
+                  React.createElement('button',{className:'btn btn-outline btn-sm',onClick:()=>onToast('Test sent to '+c.name)},'Test')
+                )
+              ))
+            )
+          )
+        )
+      ),
+      tab==='webhooks'&&React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,'Webhook Endpoints'),React.createElement('button',{className:'btn btn-primary btn-sm',onClick:()=>onToast('Webhook added')},'+ Add Webhook')),
+        React.createElement('div',{className:'card-body'},
+          React.createElement('table',null,
+            React.createElement('thead',null,React.createElement('tr',null,
+              React.createElement('th',null,'Endpoint URL'),React.createElement('th',null,'Events'),React.createElement('th',null,'Status'),React.createElement('th',null,'Last Delivery'),React.createElement('th',null,'Success Rate'),React.createElement('th',null,'Actions')
+            )),
+            React.createElement('tbody',null,
+              webhooksData.map(w=>React.createElement('tr',{key:w.url},
+                React.createElement('td',{style:{fontFamily:'monospace',fontSize:'.8rem',maxWidth:280,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}},w.url),
+                React.createElement('td',{style:{fontSize:'.8rem'}},w.events),
+                React.createElement('td',null,React.createElement('span',{className:'badge '+(w.status==='Active'?'badge-green':'badge-gray')},w.status)),
+                React.createElement('td',{style:{color:'var(--text-secondary)',fontSize:'.85rem'}},w.lastDelivery),
+                React.createElement('td',null,React.createElement('span',{style:{fontWeight:600,color:parseFloat(w.success)>90?'var(--green)':'var(--red)'}},w.success)),
+                React.createElement('td',null,
+                  React.createElement('button',{className:'btn btn-outline btn-sm',style:{marginRight:4},onClick:()=>onToast('Ping sent to '+w.url.split('/')[2])},'Ping'),
+                  React.createElement('button',{className:'btn btn-outline btn-sm',onClick:()=>onToast('Webhook deleted')},'Delete')
+                )
+              ))
+            )
+          )
+        )
+      ),
+      tab==='audit'&&React.createElement('div',{className:'card'},
+        React.createElement('div',{className:'card-header'},React.createElement('h3',null,'Audit Log'),React.createElement('button',{className:'btn btn-outline btn-sm',onClick:()=>onToast('Audit log exported')},'\u{1F4E5} Export')),
+        React.createElement('div',{className:'card-body'},
+          React.createElement('table',null,
+            React.createElement('thead',null,React.createElement('tr',null,
+              React.createElement('th',null,'Timestamp'),React.createElement('th',null,'User'),React.createElement('th',null,'Action'),React.createElement('th',null,'Module'),React.createElement('th',null,'IP Address')
+            )),
+            React.createElement('tbody',null,
+              auditLog.map((a,i)=>React.createElement('tr',{key:i},
+                React.createElement('td',{style:{fontFamily:'monospace',fontSize:'.8rem',color:'var(--text-secondary)'}},a.time),
+                React.createElement('td',{style:{fontWeight:600}},a.user),
+                React.createElement('td',null,a.action),
+                React.createElement('td',null,React.createElement('span',{className:'badge badge-blue'},a.target)),
+                React.createElement('td',{style:{fontFamily:'monospace',fontSize:'.8rem',color:'var(--text-secondary)'}},a.ip)
+              ))
+            )
+          )
+        )
+      )
+    ),
+    showCreate&&React.createElement(CreateFormModal,{title:t('inviteUserTitle'),fields:FORM_CONFIGS.user(t),lang,onClose:()=>setShowCreate(false),onSubmit:(v)=>{setShowCreate(false);onToast(v.name+' '+t('invited'));}})
+  );
+}
+
+function PaymentsPage({lang}){
+  const t=useT(lang);
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{className:'stat-grid'},
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('paymentsToday')),React.createElement('div',{className:'stat-value'},'\u00A36,120')),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('stripeBalance')),React.createElement('div',{className:'stat-value'},'\u00A318,450')),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('pendingPayouts')),React.createElement('div',{className:'stat-value'},'\u00A312,300')),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('refundsMtd')),React.createElement('div',{className:'stat-value'},'\u00A3840'))
+    ),
+    React.createElement('div',{className:'card'},
+      React.createElement('div',{className:'card-header'},React.createElement('h3',null,t('recentPayments'))),
+      React.createElement('div',{className:'card-body'},
+        React.createElement('table',null,
+          React.createElement('thead',null,React.createElement('tr',null,
+            React.createElement('th',null,t('reference')),React.createElement('th',null,t('invoice')),React.createElement('th',null,t('company')),React.createElement('th',null,t('amount')),React.createElement('th',null,t('method')),React.createElement('th',null,t('date'))
+          )),
+          React.createElement('tbody',null,
+            [{ref:'PAY-4521',inv:'CN-INV-2026-000312',co:'Shenzhen iRepair',amt:'\u00A589,400',method:'Bank Transfer',date:'2026-03-27'},
+             {ref:'PAY-4520',inv:'NL-INV-2026-000155',co:'PhoneDoc Berlin',amt:'\u20AC2,000',method:'Stripe',date:'2026-03-26'},
+             {ref:'PAY-4519',inv:'NL-INV-2026-000154',co:'Smart Repair Paris',amt:'\u20AC1,280',method:'Stripe',date:'2026-03-25'},
+             {ref:'PAY-4518',inv:'UK-INV-2026-000087',co:'TechFix London',amt:'\u00A34,520',method:'Bank Transfer',date:'2026-03-24'},
+            ].map(p=>React.createElement('tr',{key:p.ref},
+              React.createElement('td',{style:{fontWeight:600}},p.ref),
+              React.createElement('td',{style:{fontFamily:'monospace',fontSize:'.8rem',color:'var(--blue)'}},p.inv),
+              React.createElement('td',null,p.co),
+              React.createElement('td',{style:{fontWeight:600}},p.amt),
+              React.createElement('td',null,React.createElement('span',{className:'badge '+(p.method==='Stripe'?'badge-purple':'badge-blue')},p.method)),
+              React.createElement('td',{style:{color:'var(--text-secondary)'}},p.date)
+            ))
+          )
+        )
+      )
+    )
+  );
+}
+
+function CommsPage({lang,onToast}){
+  const t=useT(lang);
+  const [channel,setChannel]=useState('all');
+  const [selectedConv,setSelectedConv]=useState(CONVERSATIONS[0]);
+  const [showCompose,setShowCompose]=useState(false);
+  const [replyText,setReplyText]=useState('');
+  const channelIcons={internal:'\u{1F465}',email:'\u{1F4E7}',whatsapp:'\u{1F4F1}',wechat:'\u{1F4AC}'};
+  const channels=[{key:'all',label:'All',count:CONVERSATIONS.filter(c=>c.unread).length},{key:'internal',label:'Internal',count:CONVERSATIONS.filter(c=>c.channel==='internal'&&c.unread).length},{key:'email',label:'Email',count:CONVERSATIONS.filter(c=>c.channel==='email'&&c.unread).length},{key:'whatsapp',label:'WhatsApp',count:CONVERSATIONS.filter(c=>c.channel==='whatsapp'&&c.unread).length},{key:'wechat',label:'WeChat',count:CONVERSATIONS.filter(c=>c.channel==='wechat'&&c.unread).length}];
+  const filtered=channel==='all'?CONVERSATIONS:CONVERSATIONS.filter(c=>c.channel===channel);
+  const handleSend=()=>{if(!replyText.trim())return;onToast&&onToast('Message sent');setReplyText('');};
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{className:'stat-grid'},
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('openTickets')),React.createElement('div',{className:'stat-value'},CONVERSATIONS.length)),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('avgResponse')),React.createElement('div',{className:'stat-value'},'2.4h')),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},'Unread'),React.createElement('div',{className:'stat-value'},CONVERSATIONS.filter(c=>c.unread).length)),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},'Channels'),React.createElement('div',{className:'stat-value'},'4 active'))
+    ),
+    React.createElement('div',{style:{display:'flex',justifyContent:'flex-end',marginBottom:12}},
+      React.createElement('button',{className:'btn btn-primary btn-sm',onClick:()=>setShowCompose(true)},'\u270F\uFE0F Compose')
+    ),
+    React.createElement('div',{className:'inbox-layout'},
+      React.createElement('div',{className:'inbox-channels'},
+        channels.map(ch=>React.createElement('div',{key:ch.key,className:'inbox-channel'+(channel===ch.key?' active':''),onClick:()=>setChannel(ch.key)},
+          React.createElement('span',null,channelIcons[ch.key]||'\u{1F4EC}'),
+          React.createElement('span',null,ch.label),
+          ch.count>0&&React.createElement('span',{className:'ch-badge'},ch.count)
+        ))
+      ),
+      React.createElement('div',{className:'inbox-list'},
+        React.createElement('div',{className:'inbox-list-header'},
+          React.createElement('span',null,filtered.length+' conversations'),
+        ),
+        filtered.map(conv=>React.createElement('div',{key:conv.id,className:'inbox-item'+(selectedConv&&selectedConv.id===conv.id?' active':'')+(conv.unread?' unread':''),onClick:()=>setSelectedConv(conv)},
+          React.createElement('div',{className:'ii-top'},
+            React.createElement('span',{className:'ii-sender'},conv.sender),
+            React.createElement('span',{className:'ii-time'},conv.time)
+          ),
+          React.createElement('div',{className:'ii-subject'},conv.subject),
+          React.createElement('div',{className:'ii-preview'},conv.preview),
+          React.createElement('div',{className:'ii-meta'},
+            React.createElement('span',{className:'badge badge-'+(conv.channel==='internal'?'blue':conv.channel==='email'?'purple':conv.channel==='whatsapp'?'green':'orange'),style:{fontSize:'.65rem'}},channelIcons[conv.channel]+' '+conv.channel),
+            conv.company!=='Internal'&&React.createElement('span',{className:'badge badge-gray',style:{fontSize:'.65rem'}},conv.company)
+          )
+        ))
+      ),
+      selectedConv?React.createElement('div',{className:'inbox-thread'},
+        React.createElement('div',{className:'inbox-thread-header'},
+          React.createElement('div',null,
+            React.createElement('h3',null,selectedConv.subject),
+            React.createElement('div',{style:{fontSize:'.8rem',color:'var(--text-secondary)'}},selectedConv.sender,' \u2022 ',selectedConv.company,' \u2022 ',channelIcons[selectedConv.channel]+' '+selectedConv.channel)
+          )
+        ),
+        React.createElement('div',{className:'inbox-messages'},
+          selectedConv.messages.map((msg,i)=>React.createElement('div',{key:i,className:'msg-bubble '+(msg.sent?'sent':'received')},
+            React.createElement('div',{className:'msg-content'},msg.text),
+            React.createElement('div',{className:'msg-meta'},
+              React.createElement('span',null,msg.from),
+              React.createElement('span',null,msg.time)
+            )
+          ))
+        ),
+        React.createElement('div',{className:'inbox-compose'},
+          React.createElement('textarea',{placeholder:'Type a reply...',value:replyText,onChange:e=>setReplyText(e.target.value),onKeyDown:e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSend();}}}),
+          React.createElement('button',{className:'btn btn-primary btn-sm',style:{width:'auto',height:40},onClick:handleSend},'\u{1F4E8} Send')
+        )
+      ):React.createElement('div',{className:'inbox-empty'},React.createElement('p',null,'Select a conversation to view'))
+    ),
+    showCompose&&React.createElement(CreateFormModal,{title:'\u270F\uFE0F Compose Message',fields:[
+      {key:'to',label:'To',placeholder:'Name or email...'},
+      {key:'channel',label:'Channel',type:'select',options:['Internal','Email','WhatsApp','WeChat']},
+      {key:'subject',label:'Subject',placeholder:'Message subject'},
+      {key:'message',label:'Message',type:'textarea',placeholder:'Write your message...'},
+    ],lang,onClose:()=>setShowCompose(false),onSubmit:(v)=>{setShowCompose(false);onToast('Message sent to '+v.to);}})
+  );
+}
+
+function BuybackPage({lang,onToast}){
+  const t=useT(lang);
+  const [showCreate,setShowCreate]=useState(false);
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{className:'stat-grid'},
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('activeBuybacks')),React.createElement('div',{className:'stat-value'},'23')),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('devicesReceived')),React.createElement('div',{className:'stat-value'},'156')),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('totalValue')),React.createElement('div',{className:'stat-value'},'\u00A318,400')),
+      React.createElement('div',{className:'stat-card'},React.createElement('div',{className:'stat-label'},t('avgGrade')),React.createElement('div',{className:'stat-value'},'B+'))
+    ),
+    React.createElement('div',{className:'card'},
+      React.createElement('div',{className:'card-header'},React.createElement('h3',null,t('buybackRequests')),React.createElement('button',{className:'btn btn-primary btn-sm',onClick:()=>setShowCreate(true)},t('newBuyback'))),
+      React.createElement('div',{className:'card-body'},
+        React.createElement('table',null,
+          React.createElement('thead',null,React.createElement('tr',null,
+            React.createElement('th',null,'ID'),React.createElement('th',null,t('device')),React.createElement('th',null,t('company')),React.createElement('th',null,t('qty')),React.createElement('th',null,t('grade')),React.createElement('th',null,t('value')),React.createElement('th',null,t('status'))
+          )),
+          React.createElement('tbody',null,
+            [{id:'BB-0045',dev:'iPhone 14 Pro Max',co:'TechFix London',qty:10,grade:'A',val:'\u00A3850',st:'GRADED'},
+             {id:'BB-0044',dev:'iPhone 13 Pro',co:'MobilePartsNL',qty:25,grade:'B',val:'\u20AC1,250',st:'RECEIVED'},
+             {id:'BB-0043',dev:'Samsung S24 Ultra',co:'PhoneDoc Berlin',qty:5,grade:'A',val:'\u20AC600',st:'IN_TRANSIT'},
+            ].map(b=>React.createElement('tr',{key:b.id},
+              React.createElement('td',{style:{fontWeight:600,color:'var(--blue)'}},b.id),
+              React.createElement('td',null,b.dev),
+              React.createElement('td',null,b.co),
+              React.createElement('td',null,b.qty),
+              React.createElement('td',null,React.createElement('span',{className:'badge badge-green'},'Grade '+b.grade)),
+              React.createElement('td',{style:{fontWeight:600}},b.val),
+              React.createElement('td',null,React.createElement('span',{className:'badge '+statusBadge(b.st)},fmt(b.st)))
+            ))
+          )
+        )
+      )
+    ),
+    showCreate&&React.createElement(CreateFormModal,{title:t('newBuybackTitle'),fields:FORM_CONFIGS.buyback(t),lang,onClose:()=>setShowCreate(false),onSubmit:(v)=>{setShowCreate(false);onToast(t('buyback')+' '+t('created'));}})
+  );
+}
+
+// ─── Main App ───────────────────────────────────────────────
+function App(){
+  const [loggedIn,setLoggedIn]=useState(false);
+  const [page,setPage]=useState('dashboard');
+  const [lang,setLang]=useState('en');
+  const [toast,setToast]=useState(null);
+  const [darkMode,setDarkMode]=useState(false);
+  const [sidebarOpen,setSidebarOpen]=useState(false);
+
+  useEffect(()=>{
+    document.documentElement.setAttribute('data-theme',darkMode?'dark':'light');
+  },[darkMode]);
+
+  const t=useT(lang);
+  if(!loggedIn) return React.createElement(LoginPage,{onLogin:()=>setLoggedIn(true),lang,setLang});
+
+  const titles={dashboard:t('title.dashboard'),orders:t('title.orders'),products:t('title.products'),invoices:t('title.invoices'),
+    payments:t('title.payments'),rma:t('title.rma'),buyback:t('title.buyback'),crm:t('title.crm'),comms:t('title.comms'),
+    shipments:t('title.shipments'),reports:t('title.reports'),automation:t('title.automation'),settings:t('title.settings')};
+
+  const showToast=(msg)=>{setToast(msg);};
+
+  const pages={
+    dashboard:React.createElement(DashboardPage,{lang,onNav:setPage,onToast:showToast}),
+    orders:React.createElement(OrdersPage,{onToast:showToast,lang}),
+    products:React.createElement(ProductsPage,{lang,onToast:showToast}),
+    invoices:React.createElement(InvoicesPage,{onToast:showToast,lang}),
+    payments:React.createElement(PaymentsPage,{lang}),
+    rma:React.createElement(RmaPage,{lang,onToast:showToast}),
+    buyback:React.createElement(BuybackPage,{lang,onToast:showToast}),
+    crm:React.createElement(CrmPage,{lang,onToast:showToast}),
+    comms:React.createElement(CommsPage,{lang,onToast:showToast}),
+    shipments:React.createElement(ShipmentsPage,{lang,onToast:showToast}),
+    reports:React.createElement(ReportsPage,{lang}),
+    automation:React.createElement(AutomationPage,{lang}),
+    settings:React.createElement(SettingsPage,{lang,onToast:showToast}),
+  };
+
+  return React.createElement('div',{className:'app-layout'},
+    React.createElement(Sidebar,{active:page,onNav:setPage,lang,isOpen:sidebarOpen,onClose:()=>setSidebarOpen(false)}),
+    React.createElement('div',{className:'main-area'},
+      React.createElement(Topbar,{title:titles[page]||'Dashboard',lang,setLang,darkMode,setDarkMode,onMenuToggle:()=>setSidebarOpen(!sidebarOpen)}),
+      React.createElement('div',{className:'content'},pages[page]||React.createElement(DashboardPage))
+    ),
+    toast&&React.createElement(Toast,{message:toast,onClose:()=>setToast(null)})
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script>
+</body>
+</html>

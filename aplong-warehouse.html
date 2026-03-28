@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplong NexGen - Warehouse Management System</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --blue: #1e40af;
+            --blue-light: #dbeafe;
+            --blue-dark: #172554;
+            --green: #16a34a;
+            --red: #dc2626;
+            --amber: #d97706;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-900: #111827;
+            --white: #ffffff;
+            --text-primary: #111827;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --border-color: #e5e7eb;
+        }
+
+        [data-dark-mode="true"] {
+            --text-primary: #f9fafb;
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --border-color: #374151;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #root {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            background-color: var(--bg-primary);
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--blue) 0%, #1e3a8a 100%);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-weight: 600;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .header-center {
+            text-align: center;
+            flex: 1;
+        }
+
+        .warehouse-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .dark-toggle {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background 0.2s;
+        }
+
+        .dark-toggle:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background-color: var(--bg-secondary);
+            padding-bottom: 80px;
+        }
+
+        /* TAB NAVIGATION */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0;
+            padding: 0;
+            z-index: 50;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+        }
+
+        .tab-btn {
+            padding: 0.75rem 0.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--gray-600);
+            font-size: 0.75rem;
+            transition: all 0.2s;
+            border-top: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: var(--blue);
+            border-top-color: var(--blue);
+        }
+
+        .tab-icon {
+            font-size: 1.5rem;
+        }
+
+        /* PAGES */
+        .page {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .page.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* LOGIN PAGE */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            gap: 2rem;
+            height: 100%;
+        }
+
+        .logo-section {
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo-text {
+            color: var(--blue);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .warehouse-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .warehouse-card {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .warehouse-card:hover,
+        .warehouse-card.selected {
+            border-color: var(--blue);
+            box-shadow: 0 8px 16px rgba(30, 64, 175, 0.15);
+        }
+
+        .warehouse-card.selected {
+            background: var(--blue-light);
+        }
+
+        .warehouse-name {
+            font-weight: 600;
+            color: var(--blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .warehouse-location {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 1rem;
+        }
+
+        .warehouse-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            text-align: left;
+        }
+
+        .stat-item {
+            background: var(--bg-secondary);
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .stat-label {
+            color: var(--gray-600);
+            font-size: 0.75rem;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 0.25rem;
+        }
+
+        .login-form {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: border 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px var(--blue-light);
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e3a8a;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--gray-200);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-300);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-large {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.125rem;
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .btn-danger {
+            background: var(--red);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn-warning {
+            background: var(--amber);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #b45309;
+        }
+
+        /* DASHBOARD */
+        .dashboard {
+            padding: 1.5rem 1rem;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .kpi-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--blue);
+        }
+
+        .kpi-sub {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-btn {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .action-btn:hover {
+            border-color: var(--blue);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.1);
+        }
+
+        .action-icon {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-text {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        /* ALERTS */
+        .alert-box {
+            background: var(--blue-light);
+            border-left: 4px solid var(--blue);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
+        .alert-icon {
+            font-size: 1.25rem;
+            color: var(--blue);
+            flex-shrink: 0;
+        }
+
+        .alert-content h4 {
+            margin-bottom: 0.25rem;
+            color: var(--blue-dark);
+        }
+
+        .alert-content p {
+            font-size: 0.875rem;
+            color: var(--gray-700);
+        }
+
+        /* TABLES */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table th {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.875rem;
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-row-clickable {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .table-row-clickable:hover {
+            background: var(--bg-secondary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-urgent {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-normal {
+            background: #dbeafe;
+            color: #0c2d6b;
+        }
+
+        .badge-vip {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-in-progress {
+            background: #dbeafe;
+            color: #0c2d6b;
+        }
+
+        .badge-completed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        /* PICK LIST DETAIL */
+        .pick-detail {
+            padding: 1.5rem 1rem;
+        }
+
+        .pick-header {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pick-ref {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .pick-company {
+            color: var(--gray-600);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .pick-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .progress-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue) 0%, #0ea5e9 100%);
+            transition: width 0.3s;
+        }
+
+        .pick-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .pick-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: all 0.2s;
+        }
+
+        .pick-item.picked {
+            background: #f0fdf4;
+            border-color: var(--green);
+        }
+
+        .pick-item-location {
+            font-size: 0.875rem;
+            color: var(--blue);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .pick-item-sku {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .pick-item-name {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 1rem;
+        }
+
+        .pick-item-qty {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .qty-box {
+            background: var(--bg-secondary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+        }
+
+        .qty-label {
+            color: var(--gray-600);
+            display: block;
+            font-size: 0.75rem;
+        }
+
+        .qty-value {
+            font-weight: 600;
+            color: var(--text-primary);
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        .pick-item-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .pick-item-actions button {
+            flex: 1;
+        }
+
+        .scan-button {
+            background: var(--green);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .scan-button:hover {
+            background: #15803d;
+        }
+
+        .scan-button.scanning {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .pick-checkmark {
+            color: var(--green);
+            font-weight: 700;
+            font-size: 1.5rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* WAREHOUSE MAP */
+        .map-container {
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .warehouse-svg {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .zone-legend {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .legend-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+        }
+
+        /* PACK STATION */
+        .pack-container {
+            padding: 1.5rem 1rem;
+        }
+
+        .pack-order-selector {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pack-items-list {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .pack-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .pack-item:last-child {
+            border-bottom: none;
+        }
+
+        .pack-item-check {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--green);
+            border-radius: 4px;
+            background: var(--green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .pack-item-info {
+            flex: 1;
+        }
+
+        .pack-item-sku {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .pack-item-desc {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .pack-form {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .radio-option:hover {
+            background: var(--bg-secondary);
+        }
+
+        .radio-option input {
+            cursor: pointer;
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 1rem;
+            right: 1rem;
+            max-width: 400px;
+            background: var(--gray-900);
+            color: white;
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease-out;
+            z-index: 200;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .toast.success {
+            background: var(--green);
+        }
+
+        .toast.error {
+            background: var(--red);
+        }
+
+        .toast.warning {
+            background: var(--amber);
+        }
+
+        .toast.info {
+            background: var(--blue);
+        }
+
+        /* MODALS */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 150;
+            padding: 1rem;
+        }
+
+        .modal {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        /* RECEIVING PAGE */
+        .receiving-container {
+            padding: 1.5rem 1rem;
+        }
+
+        .receiving-form {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .receiving-items {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .receiving-item {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .receiving-item:last-child {
+            border-bottom: none;
+        }
+
+        .receiving-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 1rem;
+        }
+
+        .receiving-item-info {
+            flex: 1;
+        }
+
+        .receiving-item-sku {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .receiving-item-name {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+        }
+
+        .qty-comparison {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .qty-expected, .qty-actual {
+            background: var(--bg-secondary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+        }
+
+        .receiving-item-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* STOCK COUNT */
+        .count-container {
+            padding: 1.5rem 1rem;
+        }
+
+        .count-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .count-item-location {
+            font-size: 0.875rem;
+            color: var(--blue);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .count-item-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .count-variance {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+        }
+
+        .count-variance.discrepancy {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .count-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .count-input-group input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        /* RESPONSIVE */
+        @media (min-width: 768px) {
+            .kpi-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .warehouse-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .dashboard {
+                padding: 2rem;
+            }
+
+            .main-content {
+                padding-bottom: 0;
+            }
+
+            .tab-bar {
+                display: none;
+            }
+
+            .app-container {
+                flex-direction: row;
+            }
+
+            .sidebar {
+                width: 250px;
+                background: var(--bg-primary);
+                border-right: 1px solid var(--border-color);
+                overflow-y: auto;
+                padding: 1.5rem 1rem;
+            }
+
+            .nav-items {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .nav-item {
+                padding: 0.75rem 1rem;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+                background: var(--bg-secondary);
+                color: var(--text-primary);
+                border-left: 3px solid transparent;
+            }
+
+            .nav-item.active {
+                background: var(--blue-light);
+                border-left-color: var(--blue);
+                color: var(--blue);
+                font-weight: 600;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // Mock Data
+    const WAREHOUSES = {
+        'SZ-MAIN': {
+            name: 'Shenzhen Main',
+            location: 'Shenzhen, China',
+            orders: 287,
+            items_to_pick: 512,
+            staff: 18
+        },
+        'AMS-HUB': {
+            name: 'Amsterdam Hub',
+            location: 'Amsterdam, Netherlands',
+            orders: 156,
+            items_to_pick: 298,
+            staff: 12
+        },
+        'UK-FWD': {
+            name: 'UK Forwarding',
+            location: 'Manchester, UK',
+            orders: 94,
+            items_to_pick: 142,
+            staff: 7
+        }
+    };
+
+    const PRODUCTS = {
+        'APL-SCR-15PM-OEM': { name: 'iPhone 15 PM Screen OEM', location: 'A1-R1-S2-A', qty: 45, zone: 'A' },
+        'APL-SCR-15PM-AM': { name: 'iPhone 15 PM Screen AM', location: 'A1-R1-S2-B', qty: 120, zone: 'A' },
+        'APL-SCR-15P-OEM': { name: 'iPhone 15 Pro Screen OEM', location: 'A1-R2-S1-A', qty: 38, zone: 'A' },
+        'APL-SCR-14PM-OEM': { name: 'iPhone 14 PM Screen OEM', location: 'A2-R1-S1-A', qty: 62, zone: 'A' },
+        'APL-SCR-14P-OEM': { name: 'iPhone 14 Pro Screen OEM', location: 'A2-R1-S2-A', qty: 55, zone: 'A' },
+        'SAM-SCR-S24U': { name: 'Samsung S24 Ultra Screen', location: 'A3-R1-S1-A', qty: 28, zone: 'A' },
+        'APL-SCR-IPAD129': { name: 'iPad Pro 12.9 Screen', location: 'A3-R2-S1-A', qty: 15, zone: 'A' },
+        'APL-BAT-15PM': { name: 'iPhone 15 PM Battery', location: 'B1-R1-S3-A', qty: 200, zone: 'B' },
+        'APL-BAT-14P': { name: 'iPhone 14 Battery', location: 'B1-R2-S1-A', qty: 180, zone: 'B' },
+        'APL-BAT-MBP14': { name: 'MacBook Pro 14 Battery', location: 'B2-R1-S1-A', qty: 12, zone: 'B' },
+        'APL-CAM-15PM': { name: 'iPhone 15 PM Camera', location: 'C1-R1-S2-A', qty: 85, zone: 'C' },
+        'APL-CAM-15PM-R': { name: 'iPhone 15 PM Rear Camera', location: 'C1-R1-S2-B', qty: 80, zone: 'C' },
+        'APL-USB-15P': { name: 'iPhone 15 USB-C Port', location: 'D1-R1-S4-A', qty: 300, zone: 'D' },
+        'APL-HSG-15PM': { name: 'iPhone 15 PM Housing', location: 'D2-R1-S1-A', qty: 40, zone: 'D' }
+    };
+
+    const PICK_LISTS = [
+        {
+            id: 'PL-2026-0041',
+            order: 'ORD-2026-000147',
+            company: 'TechFix London',
+            items: ['APL-SCR-15PM-OEM', 'APL-BAT-15PM', 'APL-USB-15P'],
+            quantities: [2, 1, 3],
+            priority: 'Urgent',
+            status: 'Pending'
+        },
+        {
+            id: 'PL-2026-0042',
+            order: 'ORD-2026-000148',
+            company: 'MobilePartsNL',
+            items: ['APL-CAM-15PM', 'APL-SCR-15P-OEM', 'APL-BAT-14P', 'SAM-SCR-S24U', 'APL-USB-15P'],
+            quantities: [2, 1, 2, 1, 4],
+            priority: 'Normal',
+            status: 'Pending'
+        },
+        {
+            id: 'PL-2026-0043',
+            order: 'ORD-2026-000149',
+            company: 'PhoneDoc Berlin',
+            items: ['APL-SCR-14PM-OEM', 'APL-CAM-15PM-R'],
+            quantities: [1, 2],
+            priority: 'Normal',
+            status: 'Pending'
+        },
+        {
+            id: 'PL-2026-0044',
+            order: 'ORD-2026-000150',
+            company: 'CellParts Direct',
+            items: ['APL-HSG-15PM', 'APL-BAT-MBP14', 'APL-SCR-IPAD129', 'APL-USB-15P'],
+            quantities: [1, 3, 1, 2],
+            priority: 'VIP',
+            status: 'Pending'
+        }
+    ];
+
+    // Toast Component
+    function Toast({ message, type, onClose }) {
+        useEffect(() => {
+            const timer = setTimeout(onClose, 2500);
+            return () => clearTimeout(timer);
+        }, [onClose]);
+
+        return React.createElement('div', { className: `toast ${type}` }, message);
+    }
+
+    // Main App Component
+    function WarehouseApp() {
+        const [currentPage, setCurrentPage] = useState('login');
+        const [darkMode, setDarkMode] = useState(false);
+        const [selectedWarehouse, setSelectedWarehouse] = useState(null);
+        const [pickerName, setPickerName] = useState('');
+        const [toasts, setToasts] = useState([]);
+        const [currentPickList, setCurrentPickList] = useState(null);
+        const [pickProgress, setPickProgress] = useState({});
+        const [currentPackOrder, setCurrentPackOrder] = useState(null);
+
+        useEffect(() => {
+            document.documentElement.setAttribute('data-dark-mode', darkMode);
+        }, [darkMode]);
+
+        const showToast = (message, type = 'info') => {
+            const id = Date.now();
+            setToasts(prev => [...prev, { id, message, type }]);
+            setTimeout(() => {
+                setToasts(prev => prev.filter(t => t.id !== id));
+            }, 2500);
+        };
+
+        const handleLogin = (warehouse, name) => {
+            setSelectedWarehouse(warehouse);
+            setPickerName(name);
+            setCurrentPage('dashboard');
+            showToast(`Welcome, ${name}! 🏭`, 'success');
+        };
+
+        const handleStartPick = (pickListId) => {
+            const pickList = PICK_LISTS.find(p => p.id === pickListId);
+            setCurrentPickList(pickList);
+            const progress = {};
+            pickList.items.forEach((item, idx) => {
+                progress[idx] = { picked: 0, total: pickList.quantities[idx] };
+            });
+            setPickProgress(progress);
+            setCurrentPage('pick-detail');
+        };
+
+        const handlePickItem = (itemIndex) => {
+            setPickProgress(prev => {
+                const newProgress = { ...prev };
+                if (newProgress[itemIndex].picked < newProgress[itemIndex].total) {
+                    newProgress[itemIndex].picked += 1;
+                }
+                return newProgress;
+            });
+            showToast(`Scanned: ${currentPickList.items[itemIndex]}`, 'success');
+        };
+
+        const isPicked = (itemIndex) => {
+            return pickProgress[itemIndex]?.picked === pickProgress[itemIndex]?.total;
+        };
+
+        const allItemsPicked = currentPickList &&
+            Object.values(pickProgress).every(p => p.picked === p.total);
+
+        // LOGIN PAGE
+        if (currentPage === 'login') {
+            return React.createElement('div', { className: 'app-container' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('div', null, '🏢'),
+                    React.createElement('div', { className: 'header-center' },
+                        React.createElement('div', { className: 'logo-text' }, 'Aplong WMS')
+                    ),
+                    React.createElement('button', {
+                        className: 'dark-toggle',
+                        onClick: () => setDarkMode(!darkMode)
+                    }, darkMode ? '☀️' : '🌙')
+                ),
+                React.createElement('div', { className: 'main-content' },
+                    React.createElement('div', { className: 'login-container' },
+                        React.createElement('div', { className: 'logo-section' },
+                            React.createElement('div', { className: 'logo' }, '📦'),
+                            React.createElement('div', { className: 'logo-text' }, 'Warehouse Picker')
+                        ),
+                        React.createElement('div', { className: 'warehouse-grid' },
+                            Object.entries(WAREHOUSES).map(([code, warehouse]) =>
+                                React.createElement('div', {
+                                    key: code,
+                                    className: `warehouse-card ${selectedWarehouse === code ? 'selected' : ''}`,
+                                    onClick: () => setSelectedWarehouse(code)
+                                },
+                                    React.createElement('div', { className: 'warehouse-name' }, warehouse.name),
+                                    React.createElement('div', { className: 'warehouse-location' }, warehouse.location),
+                                    React.createElement('div', { className: 'warehouse-stats' },
+                                        React.createElement('div', { className: 'stat-item' },
+                                            React.createElement('div', { className: 'stat-label' }, 'Orders'),
+                                            React.createElement('div', { className: 'stat-value' }, warehouse.orders)
+                                        ),
+                                        React.createElement('div', { className: 'stat-item' },
+                                            React.createElement('div', { className: 'stat-label' }, 'To Pick'),
+                                            React.createElement('div', { className: 'stat-value' }, warehouse.items_to_pick)
+                                        ),
+                                        React.createElement('div', { className: 'stat-item' },
+                                            React.createElement('div', { className: 'stat-label' }, 'Staff'),
+                                            React.createElement('div', { className: 'stat-value' }, warehouse.staff)
+                                        ),
+                                        React.createElement('div', { className: 'stat-item' },
+                                            React.createElement('div', { className: 'stat-label' }, 'Status'),
+                                            React.createElement('div', { className: 'stat-value', style: { color: '#16a34a' } }, '✓ Online')
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                        React.createElement('div', { className: 'login-form' },
+                            React.createElement('div', { className: 'form-group' },
+                                React.createElement('label', { className: 'form-label' }, 'Your Name'),
+                                React.createElement('input', {
+                                    type: 'text',
+                                    className: 'form-input',
+                                    placeholder: 'e.g., James Chen',
+                                    value: pickerName,
+                                    onChange: (e) => setPickerName(e.target.value)
+                                })
+                            ),
+                            React.createElement('button', {
+                                className: 'btn btn-primary btn-large',
+                                disabled: !selectedWarehouse || !pickerName,
+                                onClick: () => handleLogin(selectedWarehouse, pickerName)
+                            }, '📍 Start Shift')
+                        )
+                    )
+                )
+            );
+        }
+
+        // DASHBOARD
+        if (currentPage === 'dashboard') {
+            return React.createElement('div', { className: 'app-container' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('div', { className: 'header-left' },
+                        React.createElement('div', null, pickerName),
+                        React.createElement('div', { className: 'warehouse-badge' }, WAREHOUSES[selectedWarehouse].name)
+                    ),
+                    React.createElement('div', { className: 'header-center' }, '📦 Dashboard'),
+                    React.createElement('button', {
+                        className: 'dark-toggle',
+                        onClick: () => setDarkMode(!darkMode)
+                    }, darkMode ? '☀️' : '🌙')
+                ),
+                React.createElement('div', { className: 'main-content' },
+                    React.createElement('div', { className: 'dashboard' },
+                        React.createElement('div', { className: 'kpi-grid' },
+                            React.createElement('div', { className: 'kpi-card' },
+                                React.createElement('div', { className: 'kpi-label' }, 'Orders to Pick'),
+                                React.createElement('div', { className: 'kpi-value' }, '12'),
+                                React.createElement('div', { className: 'kpi-sub' }, '285 items')
+                            ),
+                            React.createElement('div', { className: 'kpi-card' },
+                                React.createElement('div', { className: 'kpi-label' }, 'Items to Pack'),
+                                React.createElement('div', { className: 'kpi-value' }, '8'),
+                                React.createElement('div', { className: 'kpi-sub' }, '3 orders')
+                            ),
+                            React.createElement('div', { className: 'kpi-card' },
+                                React.createElement('div', { className: 'kpi-label' }, 'Shipped Today'),
+                                React.createElement('div', { className: 'kpi-value' }, '34'),
+                                React.createElement('div', { className: 'kpi-sub' }, '9 orders')
+                            ),
+                            React.createElement('div', { className: 'kpi-card' },
+                                React.createElement('div', { className: 'kpi-label' }, 'Accuracy'),
+                                React.createElement('div', { className: 'kpi-value', style: { color: '#16a34a' } }, '99.8%'),
+                                React.createElement('div', { className: 'kpi-sub' }, '↑ +0.2')
+                            )
+                        ),
+                        React.createElement('div', null,
+                            React.createElement('div', { className: 'section-title' }, '⚡ Alerts'),
+                            React.createElement('div', { className: 'alert-box' },
+                                React.createElement('div', { className: 'alert-icon' }, '⭐'),
+                                React.createElement('div', { className: 'alert-content' },
+                                    React.createElement('h4', null, 'VIP Order Ready'),
+                                    React.createElement('p', null, 'PL-2026-0044 (CellParts Direct) - Priority pick requested')
+                                )
+                            ),
+                            React.createElement('div', { className: 'alert-box' },
+                                React.createElement('div', { className: 'alert-icon' }, '📦'),
+                                React.createElement('div', { className: 'alert-content' },
+                                    React.createElement('h4', null, 'Low Stock Alert'),
+                                    React.createElement('p', null, 'APL-BAT-MBP14: Only 3 units remaining in Zone B')
+                                )
+                            )
+                        ),
+                        React.createElement('div', { style: { marginTop: '2rem' } },
+                            React.createElement('div', { className: 'section-title' }, '📋 My Active Pick List'),
+                            React.createElement('div', { className: 'alert-box', style: { background: '#dbeafe', borderLeftColor: '#1e40af' } },
+                                React.createElement('div', { className: 'alert-icon' }, '📍'),
+                                React.createElement('div', { className: 'alert-content' },
+                                    React.createElement('h4', null, 'PL-2026-0041'),
+                                    React.createElement('p', null, 'TechFix London • 3 items • Priority: Urgent')
+                                ),
+                                React.createElement('button', {
+                                    className: 'btn btn-primary btn-small',
+                                    style: { marginTop: '0.75rem' },
+                                    onClick: () => handleStartPick('PL-2026-0041')
+                                }, 'Continue')
+                            )
+                        ),
+                        React.createElement('div', { style: { marginTop: '2rem' } },
+                            React.createElement('div', { className: 'section-title' }, '🚀 Quick Actions'),
+                            React.createElement('div', { className: 'quick-actions' },
+                                React.createElement('div', {
+                                    className: 'action-btn',
+                                    onClick: () => setCurrentPage('pick-lists')
+                                },
+                                    React.createElement('div', { className: 'action-icon' }, '📦'),
+                                    React.createElement('div', { className: 'action-text' }, 'Pick Lists')
+                                ),
+                                React.createElement('div', {
+                                    className: 'action-btn',
+                                    onClick: () => setCurrentPage('pack')
+                                },
+                                    React.createElement('div', { className: 'action-icon' }, '📮'),
+                                    React.createElement('div', { className: 'action-text' }, 'Pack Station')
+                                ),
+                                React.createElement('div', {
+                                    className: 'action-btn',
+                                    onClick: () => setCurrentPage('receiving')
+                                },
+                                    React.createElement('div', { className: 'action-icon' }, '📥'),
+                                    React.createElement('div', { className: 'action-text' }, 'Receiving')
+                                ),
+                                React.createElement('div', {
+                                    className: 'action-btn',
+                                    onClick: () => setCurrentPage('count')
+                                },
+                                    React.createElement('div', { className: 'action-icon' }, '🔢'),
+                                    React.createElement('div', { className: 'action-text' }, 'Stock Count')
+                                )
+                            )
+                        )
+                    )
+                ),
+                React.createElement('div', { className: 'tab-bar' },
+                    ['dashboard', 'pick-lists', 'pack', 'receiving', 'map'].map(page =>
+                        React.createElement('button', {
+                            key: page,
+                            className: `tab-btn ${currentPage === page ? 'active' : ''}`,
+                            onClick: () => setCurrentPage(page)
+                        },
+                            React.createElement('span', { className: 'tab-icon' },
+                                page === 'dashboard' ? '📊' :
+                                page === 'pick-lists' ? '📦' :
+                                page === 'pack' ? '📮' :
+                                page === 'receiving' ? '📥' : '🗺️'
+                            ),
+                            React.createElement('span', null,
+                                page === 'dashboard' ? 'Dashboard' :
+                                page === 'pick-lists' ? 'Picks' :
+                                page === 'pack' ? 'Pack' :
+                                page === 'receiving' ? 'Receive' : 'Map'
+                            )
+                        )
+                    )
+                ),
+                toasts.map(toast => React.createElement(Toast, {
+                    key: toast.id,
+                    message: toast.message,
+                    type: toast.type,
+                    onClose: () => setToasts(prev => prev.filter(t => t.id !== toast.id))
+                }))
+            );
+        }
+
+        // PICK LISTS PAGE
+        if (currentPage === 'pick-lists') {
+            return React.createElement('div', { className: 'app-container' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('div', null, pickerName),
+                    React.createElement('div', { className: 'header-center' }, '📦 Pick Lists'),
+                    React.createElement('button', {
+                        className: 'dark-toggle',
+                        onClick: () => setDarkMode(!darkMode)
+                    }, darkMode ? '☀️' : '🌙')
+                ),
+                React.createElement('div', { className: 'main-content' },
+                    React.createElement('div', { style: { padding: '1.5rem 1rem' } },
+                        React.createElement('table', { className: 'table' },
+                            React.createElement('thead', null,
+                                React.createElement('tr', null,
+                                    React.createElement('th', null, 'Order'),
+                                    React.createElement('th', null, 'Company'),
+                                    React.createElement('th', null, 'Items'),
+                                    React.createElement('th', null, 'Priority')
+                                )
+                            ),
+                            React.createElement('tbody', null,
+                                PICK_LISTS.map(pl =>
+                                    React.createElement('tr', {
+                                        key: pl.id,
+                                        className: 'table-row-clickable',
+                                        onClick: () => handleStartPick(pl.id)
+                                    },
+                                        React.createElement('td', null, React.createElement('strong', null, pl.id)),
+                                        React.createElement('td', null, pl.company),
+                                        React.createElement('td', null, pl.items.length),
+                                        React.createElement('td', null,
+                                            React.createElement('span', {
+                                                className: `badge badge-${pl.priority.toLowerCase()}`
+                                            }, pl.priority)
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                ),
+                React.createElement('div', { className: 'tab-bar' },
+                    ['dashboard', 'pick-lists', 'pack', 'receiving', 'map'].map(page =>
+                        React.createElement('button', {
+                            key: page,
+                            className: `tab-btn ${currentPage === page ? 'active' : ''}`,
+                            onClick: () => setCurrentPage(page)
+                        },
+                            React.createElement('span', { className: 'tab-icon' },
+                                page === 'dashboard' ? '📊' :
+                                page === 'pick-lists' ? '📦' :
+                                page === 'pack' ? '📮' :
+                                page === 'receiving' ? '📥' : '🗺️'
+                            ),
+                            React.createElement('span', null,
+                                page === 'dashboard' ? 'Dashboard' :
+                                page === 'pick-lists' ? 'Picks' :
+                                page === 'pack' ? 'Pack' :
+                                page === 'receiving' ? 'Receive' : 'Map'
+                            )
+                        )
+                    )
+                )
+            );
+        }
+
+        // PICK DETAIL PAGE
+        if (currentPage === 'pick-detail' && currentPickList) {
+            const totalItems = currentPickList.items.length;
+            const pickedItems = Object.values(pickProgress).filter(p => p.picked === p.total).length;
+            const progressPercent = (pickedItems / totalItems) * 100;
+
+            return React.createElement('div', { className: 'app-container' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('button', {
+                        className: 'btn btn-secondary btn-small',
+                        onClick: () => setCurrentPage('pick-lists')
+                    }, '← Back'),
+                    React.createElement('div', { className: 'header-center' }, '📋 Picking'),
+                    React.createElement('button', {
+                        className: 'dark-toggle',
+                        onClick: () => setDarkMode(!darkMode)
+                    }, darkMode ? '☀️' : '🌙')
+                ),
+                React.createElement('div', { className: 'main-content' },
+                    React.createElement('div', { className: 'pick-detail' },
+                        React.createElement('div', { className: 'pick-header' },
+                            React.createElement('div', { className: 'pick-ref' }, currentPickList.id),
+                            React.createElement('div', { className: 'pick-company' }, currentPickList.company),
+                            React.createElement('div', { className: 'pick-badges' },
+                                React.createElement('span', {
+                                    className: `badge badge-${currentPickList.priority.toLowerCase()}`
+                                }, currentPickList.priority),
+                                React.createElement('span', { className: 'badge badge-in-progress' }, 'In Progress')
+                            ),
+                            React.createElement('div', { className: 'progress-container' },
+                                React.createElement('div', { className: 'progress-label' },
+                                    `${pickedItems} of ${totalItems} items picked`
+                                ),
+                                React.createElement('div', { className: 'progress-bar' },
+                                    React.createElement('div', {
+                                        className: 'progress-fill',
+                                        style: { width: `${progressPercent}%` }
+                                    })
+                                )
+                            )
+                        ),
+                        React.createElement('div', { className: 'pick-items' },
+                            currentPickList.items.map((itemSku, idx) => {
+                                const product = PRODUCTS[itemSku];
+                                const progress = pickProgress[idx];
+                                return React.createElement('div', {
+                                    key: idx,
+                                    className: `pick-item ${isPicked(idx) ? 'picked' : ''}`
+                                },
+                                    React.createElement('div', { className: 'pick-item-location' },
+                                        `Zone ${product.zone.charAt(0)} > ${product.location}`
+                                    ),
+                                    React.createElement('div', { className: 'pick-item-sku' }, itemSku),
+                                    React.createElement('div', { className: 'pick-item-name' }, product.name),
+                                    React.createElement('div', { className: 'pick-item-qty' },
+                                        React.createElement('div', { className: 'qty-box' },
+                                            React.createElement('span', { className: 'qty-label' }, 'To Pick'),
+                                            React.createElement('span', { className: 'qty-value' }, progress.total)
+                                        ),
+                                        React.createElement('div', { className: 'qty-box' },
+                                            React.createElement('span', { className: 'qty-label' }, 'Picked'),
+                                            React.createElement('span', { className: 'qty-value', style: { color: '#16a34a' } },
+                                                `${progress.picked}${isPicked(idx) ? ' ✓' : ''}`
+                                            )
+                                        ),
+                                        React.createElement('div', { className: 'qty-box' },
+                                            React.createElement('span', { className: 'qty-label' }, 'In Stock'),
+                                            React.createElement('span', { className: 'qty-value' }, product.qty)
+                                        )
+                                    ),
+                                    !isPicked(idx) && React.createElement('div', { className: 'pick-item-actions' },
+                                        React.createElement('button', {
+                                            className: 'scan-button',
+                                            onClick: () => handlePickItem(idx)
+                                        }, '📱 Scan to Pick')
+                                    ),
+                                    isPicked(idx) && React.createElement('div', { className: 'pick-checkmark' }, '✓ Picked')
+                                );
+                            })
+                        ),
+                        allItemsPicked && React.createElement('button', {
+                            className: 'btn btn-success btn-large',
+                            style: { marginTop: '1.5rem' },
+                            onClick: () => {
+                                showToast('Pick list sent to pack station!', 'success');
+                                setCurrentPage('pick-lists');
+                            }
+                        }, '✓ Complete Pick & Send to Pack')
+                    )
+                ),
+                toasts.map(toast => React.createElement(Toast, {
+                    key: toast.id,
+                    message: toast.message,
+                    type: toast.type,
+                    onClose: () => setToasts(prev => prev.filter(t => t.id !== toast.id))
+                }))
+            );
+        }
+
+        // WAREHOUSE MAP PAGE
+        if (currentPage === 'map') {
+            return React.createElement('div', { className: 'app-container' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('div', null, pickerName),
+                    React.createElement('div', { className: 'header-center' }, '🗺️ Warehouse Map'),
+                    React.createElement('button', {
+                        className: 'dark-toggle',
+                        onClick: () => setDarkMode(!darkMode)
+                    }, darkMode ? '☀️' : '🌙')
+                ),
+                React.createElement('div', { className: 'main-content' },
+                    React.createElement('div', { className: 'map-container' },
+                        React.createElement('svg', {
+                            className: 'warehouse-svg',
+                            viewBox: '0 0 600 400',
+                            style: { border: '1px solid #e5e7eb', borderRadius: '8px' }
+                        },
+                            // Receiving Dock
+                            React.createElement('rect', { x: '10', y: '10', width: '60', height: '40', fill: '#fbbf24', stroke: '#d97706', strokeWidth: '2' }),
+                            React.createElement('text', { x: '40', y: '35', textAnchor: 'middle', fontSize: '12', fontWeight: 'bold', fill: '#78350f' }, 'REC'),
+
+                            // Zone A - Screens (Blue)
+                            React.createElement('rect', { x: '80', y: '20', width: '100', height: '150', fill: '#dbeafe', stroke: '#0ea5e9', strokeWidth: '2' }),
+                            React.createElement('text', { x: '130', y: '40', textAnchor: 'middle', fontSize: '14', fontWeight: 'bold', fill: '#0c2d6b' }, 'ZONE A'),
+                            React.createElement('text', { x: '130', y: '55', textAnchor: 'middle', fontSize: '10', fill: '#0c2d6b' }, 'Screens'),
+
+                            // Zone B - Batteries (Green)
+                            React.createElement('rect', { x: '200', y: '20', width: '100', height: '150', fill: '#dcfce7', stroke: '#22c55e', strokeWidth: '2' }),
+                            React.createElement('text', { x: '250', y: '40', textAnchor: 'middle', fontSize: '14', fontWeight: 'bold', fill: '#166534' }, 'ZONE B'),
+                            React.createElement('text', { x: '250', y: '55', textAnchor: 'middle', fontSize: '10', fill: '#166534' }, 'Batteries'),
+
+                            // Zone C - Cameras (Purple)
+                            React.createElement('rect', { x: '320', y: '20', width: '100', height: '150', fill: '#e9d5ff', stroke: '#a855f7', strokeWidth: '2' }),
+                            React.createElement('text', { x: '370', y: '40', textAnchor: 'middle', fontSize: '14', fontWeight: 'bold', fill: '#581c87' }, 'ZONE C'),
+                            React.createElement('text', { x: '370', y: '55', textAnchor: 'middle', fontSize: '10', fill: '#581c87' }, 'Cameras'),
+
+                            // Zone D - Parts (Orange)
+                            React.createElement('rect', { x: '440', y: '20', width: '100', height: '150', fill: '#fed7aa', stroke: '#f97316', strokeWidth: '2' }),
+                            React.createElement('text', { x: '490', y: '40', textAnchor: 'middle', fontSize: '14', fontWeight: 'bold', fill: '#9a3412' }, 'ZONE D'),
+                            React.createElement('text', { x: '490', y: '55', textAnchor: 'middle', fontSize: '10', fill: '#9a3412' }, 'Parts'),
+
+                            // Racks (simplified as lines)
+                            React.createElement('line', { x1: '100', y1: '80', x2: '100', y2: '160', stroke: '#666', strokeWidth: '2' }),
+                            React.createElement('line', { x1: '160', y1: '80', x2: '160', y2: '160', stroke: '#666', strokeWidth: '2' }),
+                            React.createElement('line', { x1: '220', y1: '80', x2: '220', y2: '160', stroke: '#666', strokeWidth: '2' }),
+                            React.createElement('line', { x1: '280', y1: '80', x2: '280', y2: '160', stroke: '#666', strokeWidth: '2' }),
+                            React.createElement('line', { x1: '340', y1: '80', x2: '340', y2: '160', stroke: '#666', strokeWidth: '2' }),
+                            React.createElement('line', { x1: '400', y1: '80', x2: '400', y2: '160', stroke: '#666', strokeWidth: '2' }),
+                            React.createElement('line', { x1: '460', y1: '80', x2: '460', y2: '160', stroke: '#666', strokeWidth: '2' }),
+                            React.createElement('line', { x1: '520', y1: '80', x2: '520', y2: '160', stroke: '#666', strokeWidth: '2' }),
+
+                            // Pack Station
+                            React.createElement('rect', { x: '80', y: '220', width: '120', height: '60', fill: '#dbeafe', stroke: '#0ea5e9', strokeWidth: '2' }),
+                            React.createElement('text', { x: '140', y: '245', textAnchor: 'middle', fontSize: '12', fontWeight: 'bold', fill: '#0c2d6b' }, 'PACK'),
+                            React.createElement('text', { x: '140', y: '260', textAnchor: 'middle', fontSize: '10', fill: '#0c2d6b' }, 'STATION'),
+
+                            // Shipping Dock
+                            React.createElement('rect', { x: '240', y: '220', width: '120', height: '60', fill: '#86efac', stroke: '#16a34a', strokeWidth: '2' }),
+                            React.createElement('text', { x: '300', y: '245', textAnchor: 'middle', fontSize: '12', fontWeight: 'bold', fill: '#15803d' }, 'SHIP'),
+                            React.createElement('text', { x: '300', y: '260', textAnchor: 'middle', fontSize: '10', fill: '#15803d' }, 'DOCK'),
+
+                            // Current location indicator
+                            React.createElement('circle', { cx: '250', cy: '100', r: '8', fill: '#ef4444', stroke: '#fff', strokeWidth: '2' }),
+                            React.createElement('text', { x: '250', y: '125', textAnchor: 'middle', fontSize: '10', fill: '#6b7280' }, 'You are here')
+                        ),
+                        React.createElement('div', { className: 'zone-legend' },
+                            React.createElement('div', { className: 'legend-title' }, 'Warehouse Zones'),
+                            React.createElement('div', { className: 'legend-item' },
+                                React.createElement('div', { className: 'legend-color', style: { background: '#dbeafe' } }),
+                                React.createElement('span', null, 'Zone A: iPhone/iPad/Samsung Screens')
+                            ),
+                            React.createElement('div', { className: 'legend-item' },
+                                React.createElement('div', { className: 'legend-color', style: { background: '#dcfce7' } }),
+                                React.createElement('span', null, 'Zone B: Batteries & Charging')
+                            ),
+                            React.createElement('div', { className: 'legend-item' },
+                                React.createElement('div', { className: 'legend-color', style: { background: '#e9d5ff' } }),
+                                React.createElement('span', null, 'Zone C: Cameras & Sensors')
+                            ),
+                            React.createElement('div', { className: 'legend-item' },
+                                React.createElement('div', { className: 'legend-color', style: { background: '#fed7aa' } }),
+                                React.createElement('span', null, 'Zone D: Housing & Small Parts')
+                            ),
+                            React.createElement('div', { className: 'legend-item' },
+                                React.createElement('div', { className: 'legend-color', style: { background: '#fbbf24' } }),
+                                React.createElement('span', null, 'Receiving Dock')
+                            ),
+                            React.createElement('div', { className: 'legend-item' },
+                                React.createElement('div', { className: 'legend-color', style: { background: '#86efac' } }),
+                                React.createElement('span', null, 'Shipping Dock')
+                            )
+                        )
+                    )
+                ),
+                React.createElement('div', { className: 'tab-bar' },
+                    ['dashboard', 'pick-lists', 'pack', 'receiving', 'map'].map(page =>
+                        React.createElement('button', {
+                            key: page,
+                            className: `tab-btn ${currentPage === page ? 'active' : ''}`,
+                            onClick: () => setCurrentPage(page)
+                        },
+                            React.createElement('span', { className: 'tab-icon' },
+                                page === 'dashboard' ? '📊' :
+                                page === 'pick-lists' ? '📦' :
+                                page === 'pack' ? '📮' :
+                                page === 'receiving' ? '📥' : '🗺️'
+                            ),
+                            React.createElement('span', null,
+                                page === 'dashboard' ? 'Dashboard' :
+                                page === 'pick-lists' ? 'Picks' :
+                                page === 'pack' ? 'Pack' :
+                                page === 'receiving' ? 'Receive' : 'Map'
+                            )
+                        )
+                    )
+                )
+            );
+        }
+
+        // PACK STATION PAGE
+        if (currentPage === 'pack') {
+            const packOrders = PICK_LISTS.slice(0, 2);
+            const selectedOrder = currentPackOrder ? packOrders.find(o => o.id === currentPackOrder) : null;
+
+            return React.createElement('div', { className: 'app-container' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('div', null, pickerName),
+                    React.createElement('div', { className: 'header-center' }, '📮 Pack Station'),
+                    React.createElement('button', {
+                        className: 'dark-toggle',
+                        onClick: () => setDarkMode(!darkMode)
+                    }, darkMode ? '☀️' : '🌙')
+                ),
+                React.createElement('div', { className: 'main-content' },
+                    React.createElement('div', { className: 'pack-container' },
+                        !selectedOrder && React.createElement('div', null,
+                            React.createElement('div', { className: 'section-title' }, 'Orders Ready to Pack'),
+                            React.createElement('div', { className: 'pack-order-selector' },
+                                React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: '0.75rem' } },
+                                    packOrders.map(order =>
+                                        React.createElement('button', {
+                                            key: order.id,
+                                            className: 'action-btn',
+                                            onClick: () => setCurrentPackOrder(order.id),
+                                            style: { textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }
+                                        },
+                                            React.createElement('div', null,
+                                                React.createElement('strong', null, order.id),
+                                                React.createElement('div', { style: { fontSize: '0.875rem', color: '#666', marginTop: '0.25rem' } },
+                                                    `${order.company} • ${order.items.length} items`
+                                                )
+                                            ),
+                                            React.createElement('span', { style: { fontSize: '1.5rem' } }, '→')
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                        selectedOrder && React.createElement('div', null,
+                            React.createElement('button', {
+                                className: 'btn btn-secondary btn-small',
+                                onClick: () => setCurrentPackOrder(null),
+                                style: { marginBottom: '1rem' }
+                            }, '← Back'),
+                            React.createElement('div', { className: 'pick-header' },
+                                React.createElement('div', { className: 'pick-ref' }, selectedOrder.id),
+                                React.createElement('div', { className: 'pick-company' }, selectedOrder.company)
+                            ),
+                            React.createElement('div', { className: 'section-title' }, 'Items to Pack'),
+                            React.createElement('div', { className: 'pack-items-list' },
+                                selectedOrder.items.map((sku, idx) =>
+                                    React.createElement('div', { key: idx, className: 'pack-item' },
+                                        React.createElement('div', { className: 'pack-item-check' }, '✓'),
+                                        React.createElement('div', { className: 'pack-item-info' },
+                                            React.createElement('div', { className: 'pack-item-sku' }, sku),
+                                            React.createElement('div', { className: 'pack-item-desc' }, PRODUCTS[sku].name)
+                                        ),
+                                        React.createElement('div', { style: { color: '#16a34a', fontWeight: '600' } }, 'x' + selectedOrder.quantities[idx])
+                                    )
+                                )
+                            ),
+                            React.createElement('div', { className: 'pack-form' },
+                                React.createElement('div', { className: 'form-section' },
+                                    React.createElement('label', { className: 'form-label' }, 'Package Weight (kg)'),
+                                    React.createElement('input', {
+                                        type: 'number',
+                                        className: 'form-input',
+                                        placeholder: '2.5',
+                                        step: '0.1'
+                                    })
+                                ),
+                                React.createElement('div', { className: 'form-section' },
+                                    React.createElement('label', { className: 'form-label' }, 'Box Size'),
+                                    React.createElement('div', { className: 'radio-group' },
+                                        ['Small', 'Medium', 'Large', 'Pallet'].map(size =>
+                                            React.createElement('label', { key: size, className: 'radio-option' },
+                                                React.createElement('input', { type: 'radio', name: 'boxsize' }),
+                                                React.createElement('span', null, size)
+                                            )
+                                        )
+                                    )
+                                ),
+                                React.createElement('div', { className: 'form-section' },
+                                    React.createElement('label', { className: 'form-label' }, 'Carrier'),
+                                    React.createElement('div', { className: 'radio-group' },
+                                        ['DHL', 'PostNL', 'SF Express', 'FedEx'].map(carrier =>
+                                            React.createElement('label', { key: carrier, className: 'radio-option' },
+                                                React.createElement('input', { type: 'radio', name: 'carrier' }),
+                                                React.createElement('span', null, carrier)
+                                            )
+                                        )
+                                    )
+                                ),
+                                React.createElement('button', {
+                                    className: 'btn btn-success btn-large',
+                                    onClick: () => {
+                                        showToast('Tracking: APL-' + Math.random().toString(36).substr(2, 9).toUpperCase(), 'success');
+                                        setCurrentPackOrder(null);
+                                    }
+                                }, '✓ Generate Label & Ship')
+                            )
+                        )
+                    )
+                ),
+                React.createElement('div', { className: 'tab-bar' },
+                    ['dashboard', 'pick-lists', 'pack', 'receiving', 'map'].map(page =>
+                        React.createElement('button', {
+                            key: page,
+                            className: `tab-btn ${currentPage === page ? 'active' : ''}`,
+                            onClick: () => setCurrentPage(page)
+                        },
+                            React.createElement('span', { className: 'tab-icon' },
+                                page === 'dashboard' ? '📊' :
+                                page === 'pick-lists' ? '📦' :
+                                page === 'pack' ? '📮' :
+                                page === 'receiving' ? '📥' : '🗺️'
+                            ),
+                            React.createElement('span', null,
+                                page === 'dashboard' ? 'Dashboard' :
+                                page === 'pick-lists' ? 'Picks' :
+                                page === 'pack' ? 'Pack' :
+                                page === 'receiving' ? 'Receive' : 'Map'
+                            )
+                        )
+                    )
+                ),
+                toasts.map(toast => React.createElement(Toast, {
+                    key: toast.id,
+                    message: toast.message,
+                    type: toast.type,
+                    onClose: () => setToasts(prev => prev.filter(t => t.id !== toast.id))
+                }))
+            );
+        }
+
+        // RECEIVING PAGE
+        if (currentPage === 'receiving') {
+            return React.createElement('div', { className: 'app-container' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('div', null, pickerName),
+                    React.createElement('div', { className: 'header-center' }, '📥 Receiving'),
+                    React.createElement('button', {
+                        className: 'dark-toggle',
+                        onClick: () => setDarkMode(!darkMode)
+                    }, darkMode ? '☀️' : '🌙')
+                ),
+                React.createElement('div', { className: 'main-content' },
+                    React.createElement('div', { className: 'receiving-container' },
+                        React.createElement('div', { className: 'receiving-form' },
+                            React.createElement('div', { className: 'form-group' },
+                                React.createElement('label', { className: 'form-label' }, 'PO Number or Supplier'),
+                                React.createElement('input', {
+                                    type: 'text',
+                                    className: 'form-input',
+                                    placeholder: 'e.g., PO-2026-5421 or Supplier Name'
+                                })
+                            ),
+                            React.createElement('button', {
+                                className: 'btn btn-primary btn-large',
+                                onClick: () => showToast('PO loaded successfully', 'success')
+                            }, '📱 Load PO')
+                        ),
+                        React.createElement('div', { className: 'section-title' }, 'Expected Items'),
+                        React.createElement('div', { className: 'receiving-items' },
+                            PRODUCTS && Object.entries(PRODUCTS).slice(0, 5).map(([sku, product]) =>
+                                React.createElement('div', { key: sku, className: 'receiving-item' },
+                                    React.createElement('div', { className: 'receiving-item-header' },
+                                        React.createElement('div', { className: 'receiving-item-info' },
+                                            React.createElement('div', { className: 'receiving-item-sku' }, sku),
+                                            React.createElement('div', { className: 'receiving-item-name' }, product.name)
+                                        ),
+                                        React.createElement('div', { style: { color: '#16a34a', fontWeight: '600', minWidth: '40px', textAlign: 'right' } }, '✓')
+                                    ),
+                                    React.createElement('div', { className: 'qty-comparison' },
+                                        React.createElement('div', { className: 'qty-expected' },
+                                            React.createElement('strong', null, 'Expected:'), ' 50'
+                                        ),
+                                        React.createElement('div', { className: 'qty-actual' },
+                                            React.createElement('strong', null, 'Received:'), ' 50'
+                                        )
+                                    ),
+                                    React.createElement('div', { className: 'receiving-item-actions' },
+                                        React.createElement('button', { className: 'btn btn-small btn-success' }, '✓ Pass'),
+                                        React.createElement('button', { className: 'btn btn-small btn-warning' }, '⚠ Partial'),
+                                        React.createElement('button', { className: 'btn btn-small btn-danger' }, '✕ Fail')
+                                    )
+                                )
+                            )
+                        ),
+                        React.createElement('button', {
+                            className: 'btn btn-success btn-large',
+                            style: { marginTop: '1.5rem' },
+                            onClick: () => {
+                                showToast('Receiving completed. Putaway list generated.', 'success');
+                            }
+                        }, '✓ Complete Receiving')
+                    )
+                ),
+                React.createElement('div', { className: 'tab-bar' },
+                    ['dashboard', 'pick-lists', 'pack', 'receiving', 'map'].map(page =>
+                        React.createElement('button', {
+                            key: page,
+                            className: `tab-btn ${currentPage === page ? 'active' : ''}`,
+                            onClick: () => setCurrentPage(page)
+                        },
+                            React.createElement('span', { className: 'tab-icon' },
+                                page === 'dashboard' ? '📊' :
+                                page === 'pick-lists' ? '📦' :
+                                page === 'pack' ? '📮' :
+                                page === 'receiving' ? '📥' : '🗺️'
+                            ),
+                            React.createElement('span', null,
+                                page === 'dashboard' ? 'Dashboard' :
+                                page === 'pick-lists' ? 'Picks' :
+                                page === 'pack' ? 'Pack' :
+                                page === 'receiving' ? 'Receive' : 'Map'
+                            )
+                        )
+                    )
+                )
+            );
+        }
+
+        // STOCK COUNT PAGE
+        if (currentPage === 'count') {
+            return React.createElement('div', { className: 'app-container' },
+                React.createElement('div', { className: 'header' },
+                    React.createElement('div', null, pickerName),
+                    React.createElement('div', { className: 'header-center' }, '🔢 Stock Count'),
+                    React.createElement('button', {
+                        className: 'dark-toggle',
+                        onClick: () => setDarkMode(!darkMode)
+                    }, darkMode ? '☀️' : '🌙')
+                ),
+                React.createElement('div', { className: 'main-content' },
+                    React.createElement('div', { className: 'count-container' },
+                        React.createElement('div', { className: 'receiving-form', style: { marginBottom: '1.5rem' } },
+                            React.createElement('div', { className: 'form-group' },
+                                React.createElement('label', { className: 'form-label' }, 'Select Zone'),
+                                React.createElement('div', { className: 'radio-group' },
+                                    ['Zone A - Screens', 'Zone B - Batteries', 'Zone C - Cameras', 'Zone D - Parts', 'Full Warehouse'].map(zone =>
+                                        React.createElement('label', { key: zone, className: 'radio-option' },
+                                            React.createElement('input', { type: 'radio', name: 'zone' }),
+                                            React.createElement('span', null, zone)
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                        React.createElement('div', { className: 'section-title' }, 'Items to Count'),
+                        Object.entries(PRODUCTS).slice(0, 6).map(([sku, product]) =>
+                            React.createElement('div', { key: sku, className: 'count-item' },
+                                React.createElement('div', { className: 'count-item-location' }, product.location),
+                                React.createElement('div', { className: 'count-item-name' }, sku),
+                                React.createElement('div', { className: 'count-variance' },
+                                    React.createElement('span', null, React.createElement('strong', null, 'System: '), product.qty),
+                                    React.createElement('span', null, '→')
+                                ),
+                                React.createElement('div', { className: 'count-input-group' },
+                                    React.createElement('input', {
+                                        type: 'number',
+                                        placeholder: 'Actual qty',
+                                        defaultValue: product.qty
+                                    })
+                                )
+                            )
+                        ),
+                        React.createElement('button', {
+                            className: 'btn btn-success btn-large',
+                            style: { marginTop: '1.5rem' },
+                            onClick: () => showToast('Stock count submitted for review', 'success')
+                        }, '✓ Submit Count')
+                    )
+                ),
+                React.createElement('div', { className: 'tab-bar' },
+                    ['dashboard', 'pick-lists', 'pack', 'receiving', 'map'].map(page =>
+                        React.createElement('button', {
+                            key: page,
+                            className: `tab-btn ${currentPage === page ? 'active' : ''}`,
+                            onClick: () => setCurrentPage(page)
+                        },
+                            React.createElement('span', { className: 'tab-icon' },
+                                page === 'dashboard' ? '📊' :
+                                page === 'pick-lists' ? '📦' :
+                                page === 'pack' ? '📮' :
+                                page === 'receiving' ? '📥' : '🗺️'
+                            ),
+                            React.createElement('span', null,
+                                page === 'dashboard' ? 'Dashboard' :
+                                page === 'pick-lists' ? 'Picks' :
+                                page === 'pack' ? 'Pack' :
+                                page === 'receiving' ? 'Receive' : 'Map'
+                            )
+                        )
+                    )
+                )
+            );
+        }
+
+        return React.createElement('div', null, 'Loading...');
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(WarehouseApp));
+</script>
+</body>
+</html>
